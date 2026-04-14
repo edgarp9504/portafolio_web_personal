@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edgar Pérez · Data Engineer & Cloud Consultant</title>
+  <meta name="description" content="Data Engineer y Cloud Consultant especializado en pipelines de datos, Azure, AWS, automatización de marketing data y dashboards BI. Basado en Cancún, México." />
+  <meta name="keywords" content="data engineer, cloud consultant, azure, aws, databricks, ETL, pipelines, power bi, mexico, cancun, freelance" />
+  <meta property="og:title" content="Edgar Pérez · Data Engineer & Cloud Consultant" />
+  <meta property="og:description" content="Convierto tus datos en decisiones de negocio. ETL, Cloud, BI y automatización." />
+  <meta property="og:type" content="website" />
+
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0e1a;
+      --bg2:       #0f1526;
+      --bg3:       #141b2d;
+      --border:    #1e2d4a;
+      --accent:    #00d4ff;
+      --accent2:   #00ff88;
+      --text:      #e2e8f0;
+      --muted:     #8892a4;
+      --card:      #111827;
+      --radius:    12px;
+      --shadow:    0 4px 32px rgba(0,212,255,.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    ::selection { background: var(--accent); color: #000; }
+
+    /* ─── TYPOGRAPHY ───────────────────────────────────────────── */
+    h1, h2, h3, h4 { line-height: 1.2; font-weight: 700; }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
+    h3 { font-size: 1.2rem; }
+
+    .accent  { color: var(--accent); }
+    .accent2 { color: var(--accent2); }
+    .muted   { color: var(--muted); }
+
+    /* ─── LAYOUT ───────────────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    section    { padding: 6rem 0; }
+
+    .section-label {
+      font-size: .75rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: .75rem;
+    }
+    .section-title { margin-bottom: 1rem; }
+    .section-sub   { color: var(--muted); max-width: 580px; margin-bottom: 3.5rem; }
+
+    /* ─── GRID ─────────────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+
+    /* ─── BUTTONS ──────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .85rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: all .25s;
+      text-decoration: none;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #0099cc);
+      color: #000;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,.35); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+    }
+    .btn-outline:hover { background: rgba(0,212,255,.08); transform: translateY(-2px); }
+
+    .btn-wa {
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      color: #fff;
+    }
+    .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,211,102,.35); }
+
+    .btn-group { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+    /* ─── NAV ──────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1rem 0;
+      transition: background .3s, box-shadow .3s;
+    }
+    nav.scrolled {
+      background: rgba(10,14,26,.92);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .9rem;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      transition: all .3s;
+    }
+
+    /* ─── MOBILE NAV ────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        flex-direction: column;
+        gap: 0;
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
+        padding: 1rem 0;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: .75rem 1.5rem; }
+    }
+
+    /* ─── HERO ─────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: 5rem;
+    }
+
+    /* Grid background */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    /* Glow orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .15;
+      pointer-events: none;
+    }
+    .orb1 { width: 500px; height: 500px; background: var(--accent);  top: -100px; right: -100px; }
+    .orb2 { width: 350px; height: 350px; background: var(--accent2); bottom: 0;   left: -80px; }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(0,212,255,.08);
+      border: 1px solid rgba(0,212,255,.2);
+      border-radius: 100px;
+      padding: .35rem 1rem;
+      font-size: .82rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+    .dot { width: 7px; height: 7px; background: var(--accent2); border-radius: 50%; animation: blink 1.5s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .hero-title { margin-bottom: 1.25rem; }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 580px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 3rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item { display: flex; flex-direction: column; }
+    .stat-num  { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+    .stat-label{ font-size: .82rem; color: var(--muted); }
+
+    /* ─── ABOUT ────────────────────────────────────────────────── */
+    #about { background: var(--bg2); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about-text p { color: var(--muted); margin-bottom: 1rem; }
+    .about-text p strong { color: var(--text); }
+
+    .about-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: 1.5rem;
+    }
+    .pill {
+      background: rgba(0,212,255,.07);
+      border: 1px solid rgba(0,212,255,.18);
+      color: var(--accent);
+      padding: .3rem .85rem;
+      border-radius: 100px;
+      font-size: .8rem;
+      font-weight: 500;
+    }
+
+    .about-cards { display: flex; flex-direction: column; gap: 1rem; }
+
+    .about-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: border-color .25s, transform .25s;
+    }
+    .about-card:hover { border-color: var(--accent); transform: translateX(4px); }
+    .about-card-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: .1rem; }
+    .about-card h4   { font-size: .95rem; margin-bottom: .3rem; }
+    .about-card p    { font-size: .85rem; color: var(--muted); }
+
+    @media (max-width: 768px) {
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+
+    /* ─── SERVICES ─────────────────────────────────────────────── */
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transition: transform .3s;
+    }
+    .service-card:hover { border-color: rgba(0,212,255,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
+    .service-card:hover::after { transform: scaleX(1); }
+
+    .service-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .service-card h3 { margin-bottom: .5rem; }
+    .service-problem {
+      font-size: .82rem;
+      color: #ef4444;
+      background: rgba(239,68,68,.08);
+      border-radius: 6px;
+      padding: .3rem .7rem;
+      margin: .75rem 0 .5rem;
+      display: inline-block;
+    }
+    .service-solution {
+      font-size: .82rem;
+      color: var(--accent2);
+      background: rgba(0,255,136,.08);
+      border-radius: 6px;
+      padding: .3rem .7rem;
+      margin-bottom: .75rem;
+      display: inline-block;
+    }
+    .service-card p { font-size: .88rem; color: var(--muted); }
+
+    .service-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
+    .tag {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .2rem .6rem;
+      font-size: .75rem;
+      color: var(--muted);
+    }
+
+    /* ─── PROJECTS ─────────────────────────────────────────────── */
+    #projects { background: var(--bg2); }
+
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      transition: all .3s;
+    }
+    .project-card:hover { border-color: rgba(0,212,255,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .project-label {
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .project-icon { font-size: 1.8rem; }
+    .project-card h3 { margin-bottom: .75rem; }
+
+    .project-section { margin-bottom: .75rem; }
+    .project-section-label {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: .3rem;
+    }
+    .project-section p { font-size: .88rem; color: var(--muted); }
+
+    .impact-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: rgba(0,255,136,.08);
+      border: 1px solid rgba(0,255,136,.2);
+      border-radius: 8px;
+      padding: .4rem .85rem;
+      font-size: .82rem;
+      color: var(--accent2);
+      font-weight: 600;
+      margin-top: .75rem;
+    }
+
+    .tech-stack-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
+
+    /* ─── TECH STACK ───────────────────────────────────────────── */
+    .stack-group { margin-bottom: 2.5rem; }
+    .stack-group-title {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .stack-items { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+    .stack-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .6rem 1.1rem;
+      font-size: .88rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all .25s;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .stack-item:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* ─── TESTIMONIALS ─────────────────────────────────────────── */
+    #testimonials { background: var(--bg2); }
+
+    .testimonial-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: 1rem; right: 1.5rem;
+      font-size: 4rem;
+      color: var(--accent);
+      opacity: .15;
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    .stars { color: #fbbf24; font-size: .9rem; margin-bottom: .75rem; }
+    .testimonial-text { font-size: .92rem; color: var(--muted); margin-bottom: 1.25rem; font-style: italic; }
+    .testimonial-author { display: flex; align-items: center; gap: .75rem; }
+    .author-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .9rem; color: #000; flex-shrink: 0;
+    }
+    .author-name  { font-size: .9rem; font-weight: 600; }
+    .author-title { font-size: .78rem; color: var(--muted); }
+
+    /* ─── CTA ──────────────────────────────────────────────────── */
+    #cta {
+      text-align: center;
+      background: linear-gradient(180deg, var(--bg) 0%, rgba(0,212,255,.04) 50%, var(--bg) 100%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    #cta h2 { margin-bottom: 1rem; }
+    #cta p  { color: var(--muted); margin-bottom: 2.5rem; max-width: 520px; margin-left: auto; margin-right: auto; }
+    #cta .btn-group { justify-content: center; }
+
+    /* ─── FOOTER ───────────────────────────────────────────────── */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .footer-logo { font-weight: 700; }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy { font-size: .82rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 1.25rem; }
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .88rem;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ─── FLOATING WA ───────────────────────────────────────────── */
+    .wa-float {
+      position: fixed;
+      bottom: 1.75rem;
+      right: 1.75rem;
+      z-index: 999;
+      width: 58px;
+      height: 58px;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,.45);
+      text-decoration: none;
+      transition: transform .25s;
+      animation: pulse-wa 2s infinite;
+    }
+    .wa-float:hover { transform: scale(1.1); }
+    .wa-float svg   { width: 28px; height: 28px; fill: #fff; }
+
+    @keyframes pulse-wa {
+      0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,.45); }
+      50%      { box-shadow: 0 4px 32px rgba(37,211,102,.7), 0 0 0 8px rgba(37,211,102,.1); }
+    }
+
+    /* ─── ANIMATIONS ────────────────────────────────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: none; }
+
+    /* stagger children */
+    .stagger > * { transition-delay: calc(var(--i, 0) * 80ms); }
+
+    /* ─── DIVIDER ───────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0;
+    }
+
+    /* ─── SCROLL BAR ─────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ NAV ═══════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#hero">Edgar<span>.</span>dev</a>
+    <button class="hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">Sobre mí</a></li>
+      <li><a href="#services">Servicios</a></li>
+      <li><a href="#projects">Proyectos</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#cta">Contacto</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ═══════════════════ HERO ══════════════════════════════════════ -->
+<section id="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="container hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span> Disponible para proyectos · Cancún, México
+    </div>
+
+    <h1 class="hero-title">
+      Tus datos,<br>
+      convertidos en<br>
+      <span class="accent">ventaja competitiva.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Construyo pipelines de datos robustos, automatizo tu flujo de información
+      y te ayudo a tomar decisiones basadas en evidencia — no en intuición.
+    </p>
+
+    <div class="btn-group">
+      <a href="#cta" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Agendar llamada
+      </a>
+      <a href="https://wa.me/529981234567?text=Hola%20Edgar%2C%20vi%20tu%20portafolio%20y%20me%20interesa%20hablar%20sobre%20un%20proyecto" target="_blank" rel="noopener" class="btn btn-wa">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.997 1.003C6.006 1.003 1.097 5.91 1.097 11.9c0 1.91.498 3.698 1.368 5.246L1 22.997l5.98-1.442A10.853 10.853 0 0011.997 22.8c5.99 0 10.903-4.909 10.903-10.9 0-5.99-4.913-10.897-10.903-10.897zm0 19.797a8.953 8.953 0 01-4.556-1.243l-.327-.194-3.555.858.894-3.455-.213-.35A8.91 8.91 0 013.1 11.9c0-4.909 3.996-8.9 8.897-8.9 4.9 0 8.897 3.991 8.897 8.9 0 4.91-3.997 8.9-8.897 8.9z"/></svg>
+        WhatsApp directo
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">5+</span>
+        <span class="stat-label">Años de experiencia</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">20+</span>
+        <span class="stat-label">Proyectos entregados</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Clouds dominadas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">40%</span>
+        <span class="stat-label">Reducción de costos promedio</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════ ABOUT ═════════════════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text fade-up">
+        <div class="section-label">Sobre mí</div>
+        <h2 class="section-title">No solo escribo código. <span class="accent">Resuelvo problemas de negocio.</span></h2>
+
+        <p>Soy Edgar Pérez, <strong>Data Engineer y Cloud Consultant</strong> basado en Cancún. Llevo más de 5 años construyendo la infraestructura de datos que permite a empresas tomar decisiones más rápidas y con mayor certeza.</p>
+
+        <p>Comencé en el mundo del desarrollo backend con <strong>Python y FastAPI</strong>, y naturalmente migré hacia la ingeniería de datos cuando vi que el mayor problema de mis clientes no era la falta de datos — era que sus datos <strong>no estaban conectados, limpios ni listos para usarse</strong>.</p>
+
+        <p>Hoy combino experiencia técnica profunda en <strong>Azure y AWS</strong> con una visión de negocio clara: cada pipeline que construyo debe generar ROI visible y medible.</p>
+
+        <div class="about-pills">
+          <span class="pill">Cloud Architecture</span>
+          <span class="pill">Data Engineering</span>
+          <span class="pill">Marketing Data</span>
+          <span class="pill">BI & Dashboards</span>
+          <span class="pill">API Integrations</span>
+        </div>
+      </div>
+
+      <div class="about-cards fade-up" style="transition-delay:.15s">
+        <div class="about-card">
+          <span class="about-card-icon">🎯</span>
+          <div>
+            <h4>Orientado a resultados</h4>
+            <p>Mido el éxito en ahorro de horas, reducción de costos y decisiones más rápidas — no en líneas de código.</p>
+          </div>
+        </div>
+        <div class="about-card">
+          <span class="about-card-icon">☁️</span>
+          <div>
+            <h4>Multi-cloud sin dogmas</h4>
+            <p>Trabajo con Azure, AWS y GCP. Te recomiendo la herramienta correcta para tu caso, no la que más conozco.</p>
+          </div>
+        </div>
+        <div class="about-card">
+          <span class="about-card-icon">📊</span>
+          <div>
+            <h4>Marketing + Data = ventaja real</h4>
+            <p>Entiendo el ecosistema de Google Ads, Meta, TikTok y GA4. Conecto tus datos de marketing con tu BI.</p>
+          </div>
+        </div>
+        <div class="about-card">
+          <span class="about-card-icon">🤝</span>
+          <div>
+            <h4>Comunicación clara, sin tecnicismos</h4>
+            <p>Traduzco el lenguaje técnico al lenguaje de negocio para que siempre entiendas qué se está construyendo y por qué.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════ SERVICES ══════════════════════════════════ -->
+<section id="services">
+  <div class="container">
+    <div class="section-label fade-up">Servicios</div>
+    <h2 class="section-title fade-up">¿En qué puedo <span class="accent">ayudarte?</span></h2>
+    <p class="section-sub fade-up">Soluciones de datos end-to-end, desde la extracción hasta el dashboard.</p>
+
+    <div class="grid-3 stagger">
+
+      <div class="service-card fade-up">
+        <span class="service-icon">⚙️</span>
+        <h3>Data Engineering</h3>
+        <span class="service-problem">Problema → Datos dispersos, sin confianza</span>
+        <span class="service-solution">Solución → Pipelines ETL/ELT robustos y automatizados</span>
+        <p>Diseño y construyo arquitecturas Medallion (Bronze → Silver → Gold) que centralizan y limpian tus datos para que sean confiables, reutilizables y escalables.</p>
+        <div class="service-tags">
+          <span class="tag">Azure Data Factory</span>
+          <span class="tag">AWS Glue</span>
+          <span class="tag">Databricks</span>
+          <span class="tag">PySpark</span>
+        </div>
+      </div>
+
+      <div class="service-card fade-up">
+        <span class="service-icon">📣</span>
+        <h3>Automatización de Marketing Data</h3>
+        <span class="service-problem">Problema → Reportes manuales cada semana</span>
+        <span class="service-solution">Solución → Datos de ads actualizados automáticamente</span>
+        <p>Integro las APIs de Google Ads, Meta Ads, TikTok y GA4 en tu data warehouse. Tu equipo de marketing toma decisiones con datos de ayer, no de la semana pasada.</p>
+        <div class="service-tags">
+          <span class="tag">Google Ads API</span>
+          <span class="tag">Meta API</span>
+          <span class="tag">GA4</span>
+          <span class="tag">TikTok API</span>
+        </div>
+      </div>
+
+      <div class="service-card fade-up">
+        <span class="service-icon">📈</span>
+        <h3>Dashboards & BI</h3>
+        <span class="service-problem">Problema → Excel interminable, sin visibilidad</span>
+        <span class="service-solution">Solución → Dashboards en tiempo real con acción clara</span>
+        <p>Construyo dashboards en Power BI y Tableau conectados a tus fuentes de datos. Diseñados para que cualquier persona del equipo entienda el negocio de un vistazo.</p>
+        <div class="service-tags">
+          <span class="tag">Power BI</span>
+          <span class="tag">Tableau</span>
+          <span class="tag">DAX</span>
+          <span class="tag">Semántica de datos</span>
+        </div>
+      </div>
+
+      <div class="service-card fade-up">
+        <span class="service-icon">🔌</span>
+        <h3>Integraciones API</h3>
+        <span class="service-problem">Problema → Sistemas que no se hablan entre sí</span>
+        <span class="service-solution">Solución → Flujos automatizados entre plataformas</span>
+        <p>Desarrollo conectores e integraciones personalizadas con FastAPI, Lambda y Azure Functions para que tus herramientas compartan información sin intervención manual.</p>
+        <div class="service-tags">
+          <span class="tag">FastAPI</span>
+          <span class="tag">AWS Lambda</span>
+          <span class="tag">REST APIs</span>
+          <span class="tag">Webhooks</span>
+        </div>
+      </div>
+
+      <div class="service-card fade-up">
+        <span class="service-icon">🏗️</span>
+        <h3>Consultoría de Arquitectura</h3>
+        <span class="service-problem">Problema → Deuda técnica y costos de nube elevados</span>
+        <span class="service-solution">Solución → Arquitectura optimizada y bien documentada</span>
+        <p>Audito tu arquitectura actual, identifico cuellos de botella y rediseño el stack para que sea más eficiente, escalable y económico — sin tirar lo que ya funciona.</p>
+        <div class="service-tags">
+          <span class="tag">Azure Synapse</span>
+          <span class="tag">Redshift</span>
+          <span class="tag">Snowflake</span>
+          <span class="tag">Cost optimization</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════ PROJECTS ══════════════════════════════════ -->
+<section id="projects">
+  <div class="container">
+    <div class="section-label fade-up">Proyectos</div>
+    <h2 class="section-title fade-up">Trabajo real, <span class="accent">resultados reales.</span></h2>
+    <p class="section-sub fade-up">Casos donde la ingeniería de datos generó impacto directo en el negocio.</p>
+
+    <div class="grid-2 stagger">
+
+      <!-- P1 -->
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div>
+            <div class="project-label">AWS · ETL</div>
+            <h3>Pipeline ETL con AWS Glue para E-commerce</h3>
+          </div>
+          <span class="project-icon">🛒</span>
+        </div>
+
+        <div class="project-section">
+          <div class="project-section-label">Problema</div>
+          <p>Una tienda en línea con datos de ventas, inventario y logística en 4 sistemas distintos. Los reportes tardaban 3 días en generarse de forma manual.</p>
+        </div>
+        <div class="project-section">
+          <div class="project-section-label">Solución</div>
+          <p>Pipeline ETL en AWS Glue que extrae datos de múltiples fuentes (S3, RDS, APIs), transforma con PySpark y carga en Redshift. Orquestado con Step Functions.</p>
+        </div>
+
+        <div class="impact-badge">
+          ⚡ Reportes de 3 días → 15 minutos automáticos
+        </div>
+
+        <div class="tech-stack-tags">
+          <span class="tag">AWS Glue</span><span class="tag">PySpark</span>
+          <span class="tag">S3</span><span class="tag">Redshift</span><span class="tag">Step Functions</span>
+        </div>
+      </div>
+
+      <!-- P2 -->
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div>
+            <div class="project-label">Azure · Lakehouse</div>
+            <h3>Arquitectura Medallion en Azure Databricks</h3>
+          </div>
+          <span class="project-icon">🏔️</span>
+        </div>
+
+        <div class="project-section">
+          <div class="project-section-label">Problema</div>
+          <p>Empresa con múltiples fuentes de datos sin gobernanza. Los analistas perdían horas buscando la "versión correcta" de los datos antes de poder trabajar.</p>
+        </div>
+        <div class="project-section">
+          <div class="project-section-label">Solución</div>
+          <p>Implementación completa de arquitectura Medallion (Bronze/Silver/Gold) sobre Azure Data Lake con Databricks, Delta Lake y Azure Data Factory como orquestador.</p>
+        </div>
+
+        <div class="impact-badge">
+          ⚡ -60% tiempo de preparación de datos por analista
+        </div>
+
+        <div class="tech-stack-tags">
+          <span class="tag">Databricks</span><span class="tag">Delta Lake</span>
+          <span class="tag">Azure Data Factory</span><span class="tag">Azure Synapse</span>
+        </div>
+      </div>
+
+      <!-- P3 -->
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div>
+            <div class="project-label">Marketing Data · APIs</div>
+            <h3>Centralización de Datos de Advertising</h3>
+          </div>
+          <span class="project-icon">📣</span>
+        </div>
+
+        <div class="project-section">
+          <div class="project-section-label">Problema</div>
+          <p>Agencia de marketing con clientes en Google Ads, Meta y TikTok. El equipo generaba reportes descargando CSVs manualmente de cada plataforma.</p>
+        </div>
+        <div class="project-section">
+          <div class="project-section-label">Solución</div>
+          <p>Sistema de extracción automática vía APIs oficiales, normalización de métricas entre plataformas y dashboard unificado en Power BI actualizado cada 6 horas.</p>
+        </div>
+
+        <div class="impact-badge">
+          ⚡ 12 horas/semana de trabajo manual eliminadas
+        </div>
+
+        <div class="tech-stack-tags">
+          <span class="tag">Google Ads API</span><span class="tag">Meta API</span>
+          <span class="tag">TikTok API</span><span class="tag">Python</span><span class="tag">Power BI</span>
+        </div>
+      </div>
+
+      <!-- P4 -->
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div>
+            <div class="project-label">Turismo · Automatización</div>
+            <h3>Sistema de Datos para ToursGoMX</h3>
+          </div>
+          <span class="project-icon">🌴</span>
+        </div>
+
+        <div class="project-section">
+          <div class="project-section-label">Problema</div>
+          <p>Operadora turística en Cancún con reservas, pagos y operaciones en plataformas desconectadas. Sin visibilidad de rentabilidad por tour o temporada.</p>
+        </div>
+        <div class="project-section">
+          <div class="project-section-label">Solución</div>
+          <p>Integración de CRM, sistema de reservas y pasarela de pagos en un data warehouse unificado. Dashboard de KPIs operativos y financieros por destino y temporada.</p>
+        </div>
+
+        <div class="impact-badge">
+          ⚡ +30% visibilidad de rentabilidad por operación
+        </div>
+
+        <div class="tech-stack-tags">
+          <span class="tag">FastAPI</span><span class="tag">PostgreSQL</span>
+          <span class="tag">AWS RDS</span><span class="tag">Power BI</span><span class="tag">Python</span>
+        </div>
+      </div>
+
+      <!-- P5 -->
+      <div class="project-card fade-up">
+        <div class="project-header">
+          <div>
+            <div class="project-label">BI · Reportes Automatizados</div>
+            <h3>Sistema de Reportes de Dirección Automatizado</h3>
+          </div>
+          <span class="project-icon">📋</span>
+        </div>
+
+        <div class="project-section">
+          <div class="project-section-label">Problema</div>
+          <p>Empresa con 8 gerentes enviando reportes por email cada lunes. El equipo de BI tardaba el fin de semana consolidando información para la reunión directiva.</p>
+        </div>
+        <div class="project-section">
+          <div class="project-section-label">Solución</div>
+          <p>Pipeline que consolida datos de todos los departamentos, genera el reporte automáticamente y lo envía cada lunes a las 7 AM con comparativo semana anterior.</p>
+        </div>
+
+        <div class="impact-badge">
+          ⚡ 0 horas de trabajo manual los fines de semana
+        </div>
+
+        <div class="tech-stack-tags">
+          <span class="tag">Python</span><span class="tag">SQL</span>
+          <span class="tag">Azure Data Factory</span><span class="tag">Power BI</span><span class="tag">Logic Apps</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════ STACK ══════════════════════════════════════ -->
+<section id="stack">
+  <div class="container">
+    <div class="section-label fade-up">Stack tecnológico</div>
+    <h2 class="section-title fade-up">Herramientas que <span class="accent">domino.</span></h2>
+    <p class="section-sub fade-up">No colecciono tecnologías. Cada herramienta en mi stack tiene un propósito y la he usado en producción.</p>
+
+    <div class="stack-group fade-up">
+      <div class="stack-group-title">Lenguajes & Procesamiento</div>
+      <div class="stack-items">
+        <span class="stack-item">🐍 Python</span>
+        <span class="stack-item">✨ PySpark</span>
+        <span class="stack-item">🗄️ SQL</span>
+        <span class="stack-item">⚡ FastAPI</span>
+        <span class="stack-item">🔷 Scala (básico)</span>
+      </div>
+    </div>
+
+    <div class="stack-group fade-up">
+      <div class="stack-group-title">Cloud · Azure</div>
+      <div class="stack-items">
+        <span class="stack-item">🔵 Azure Data Factory</span>
+        <span class="stack-item">🔵 Azure Databricks</span>
+        <span class="stack-item">🔵 Azure Synapse Analytics</span>
+        <span class="stack-item">🔵 Azure Data Lake Gen2</span>
+        <span class="stack-item">🔵 Azure Functions</span>
+      </div>
+    </div>
+
+    <div class="stack-group fade-up">
+      <div class="stack-group-title">Cloud · AWS</div>
+      <div class="stack-items">
+        <span class="stack-item">🟠 AWS Glue</span>
+        <span class="stack-item">🟠 Amazon S3</span>
+        <span class="stack-item">🟠 Amazon Redshift</span>
+        <span class="stack-item">🟠 AWS Lambda</span>
+        <span class="stack-item">🟠 Step Functions</span>
+        <span class="stack-item">🟠 RDS</span>
+      </div>
+    </div>
+
+    <div class="stack-group fade-up">
+      <div class="stack-group-title">Plataformas de Datos</div>
+      <div class="stack-items">
+        <span class="stack-item">🟥 Databricks</span>
+        <span class="stack-item">❄️ Snowflake</span>
+        <span class="stack-item">🔺 Delta Lake</span>
+        <span class="stack-item">🐘 PostgreSQL</span>
+      </div>
+    </div>
+
+    <div class="stack-group fade-up">
+      <div class="stack-group-title">BI & Visualización</div>
+      <div class="stack-items">
+        <span class="stack-item">📊 Power BI</span>
+        <span class="stack-item">📈 Tableau</span>
+        <span class="stack-item">🔢 DAX</span>
+      </div>
+    </div>
+
+    <div class="stack-group fade-up">
+      <div class="stack-group-title">APIs de Marketing</div>
+      <div class="stack-items">
+        <span class="stack-item">🔴 Google Ads API</span>
+        <span class="stack-item">🔵 Meta Ads API</span>
+        <span class="stack-item">📱 TikTok API</span>
+        <span class="stack-item">🟢 GA4 API</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════ TESTIMONIALS ══════════════════════════════ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-label fade-up">Testimonios</div>
+    <h2 class="section-title fade-up">Lo que dicen <span class="accent">mis clientes.</span></h2>
+    <p class="section-sub fade-up">Resultados que hablan por sí mismos.</p>
+
+    <div class="grid-3 stagger">
+
+      <div class="testimonial-card fade-up">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Edgar transformó completamente cómo manejamos nuestros datos de marketing. Lo que antes era un proceso manual de medio día, ahora se actualiza solo. El ROI fue inmediato."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">MR</div>
+          <div>
+            <div class="author-name">María R.</div>
+            <div class="author-title">Directora de Marketing · Agencia Digital</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card fade-up">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Contratamos a Edgar para una arquitectura en Azure. No solo entregó lo técnico, sino que nos explicó cada decisión en términos de negocio. Eso marca la diferencia con otros consultores."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">CA</div>
+          <div>
+            <div class="author-name">Carlos A.</div>
+            <div class="author-title">CTO · Startup Fintech</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card fade-up">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"El sistema de reportes automáticos que Edgar construyó nos ahorró un fin de semana completo al mes. Ahora nuestra reunión directiva del lunes empieza con datos frescos, no con suposiciones."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">LP</div>
+          <div>
+            <div class="author-name">Laura P.</div>
+            <div class="author-title">Gerente de Operaciones · Empresa Turística</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════ CTA ════════════════════════════════════════ -->
+<section id="cta">
+  <div class="container">
+    <div class="section-label fade-up">¿Empezamos?</div>
+    <h2 class="fade-up">¿Quieres automatizar tus datos<br>y tomar mejores decisiones?</h2>
+    <p class="fade-up">Cuéntame tu proyecto. En 30 minutos te digo si puedo ayudarte y cómo.</p>
+
+    <div class="btn-group fade-up">
+      <a
+        href="https://wa.me/529981234567?text=Hola%20Edgar%2C%20vi%20tu%20portafolio%20y%20me%20gustar%C3%ADa%20agendar%20una%20llamada%20para%20hablar%20sobre%20mi%20proyecto"
+        target="_blank"
+        rel="noopener"
+        class="btn btn-wa"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.997 1.003C6.006 1.003 1.097 5.91 1.097 11.9c0 1.91.498 3.698 1.368 5.246L1 22.997l5.98-1.442A10.853 10.853 0 0011.997 22.8c5.99 0 10.903-4.909 10.903-10.9 0-5.99-4.913-10.897-10.903-10.897zm0 19.797a8.953 8.953 0 01-4.556-1.243l-.327-.194-3.555.858.894-3.455-.213-.35A8.91 8.91 0 013.1 11.9c0-4.909 3.996-8.9 8.897-8.9 4.9 0 8.897 3.991 8.897 8.9 0 4.91-3.997 8.9-8.897 8.9z"/></svg>
+        Escribir por WhatsApp
+      </a>
+      <a href="mailto:edgar@ejemplo.com" class="btn btn-outline">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        Enviar email
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">Edgar<span>.</span>dev</div>
+        <div class="footer-copy">© 2025 Edgar Pérez · Data Engineer & Cloud Consultant</div>
+      </div>
+      <div class="footer-links">
+        <a href="https://linkedin.com/in/tu-perfil" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/tu-usuario" target="_blank" rel="noopener">GitHub</a>
+        <a href="mailto:edgar@ejemplo.com">Email</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════ FLOATING WA ═══════════════════════════════ -->
+<a
+  class="wa-float"
+  href="https://wa.me/529981234567?text=Hola%20Edgar%2C%20vi%20tu%20portafolio%20y%20me%20gustar%C3%ADa%20hablar%20contigo"
+  target="_blank"
+  rel="noopener"
+  aria-label="Contactar por WhatsApp"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.997 1.003C6.006 1.003 1.097 5.91 1.097 11.9c0 1.91.498 3.698 1.368 5.246L1 22.997l5.98-1.442A10.853 10.853 0 0011.997 22.8c5.99 0 10.903-4.909 10.903-10.9 0-5.99-4.913-10.897-10.903-10.897zm0 19.797a8.953 8.953 0 01-4.556-1.243l-.327-.194-3.555.858.894-3.455-.213-.35A8.91 8.91 0 013.1 11.9c0-4.909 3.996-8.9 8.897-8.9 4.9 0 8.897 3.991 8.897 8.9 0 4.91-3.997 8.9-8.897 8.9z"/></svg>
+</a>
+
+<!-- ═══════════════════ JS ═════════════════════════════════════════ -->
+<script>
+  /* ── Sticky nav ── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  /* ── Mobile hamburger ── */
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+
+  /* ── Fade-up on scroll (IntersectionObserver) ── */
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+
+  document.querySelectorAll('.fade-up').forEach((el, i) => {
+    el.style.setProperty('--i', i % 6); // for stagger
+    observer.observe(el);
+  });
+
+  /* ── Active nav link on scroll ── */
+  const sections = document.querySelectorAll('section[id]');
+  const navAs    = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navAs.forEach(a => {
+      a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--accent)' : '';
+    });
+  });
+</script>
+
+</body>
+</html>

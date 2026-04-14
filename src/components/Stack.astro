@@ -1,0 +1,75 @@
+---
+const groups = [
+  {
+    label: 'Lenguajes & Procesamiento',
+    items: ['🐍 Python', '✨ PySpark', '🗄️ SQL', '⚡ FastAPI', '🔷 Scala (básico)'],
+  },
+  {
+    label: 'Cloud · Azure',
+    items: ['🔵 Azure Data Factory', '🔵 Azure Databricks', '🔵 Azure Synapse', '🔵 Azure Data Lake Gen2', '🔵 Azure Functions', '🔵 Azure OpenAI'],
+  },
+  {
+    label: 'Cloud · AWS',
+    items: ['🟠 AWS Glue', '🟠 Amazon S3', '🟠 Amazon Redshift', '🟠 AWS Lambda', '🟠 Step Functions', '🟠 RDS'],
+  },
+  {
+    label: 'Plataformas de Datos',
+    items: ['🟥 Databricks', '❄️ Snowflake', '🔺 Delta Lake', '🐘 PostgreSQL', '📦 dbt'],
+  },
+  {
+    label: 'IA & Machine Learning',
+    items: ['🧠 Azure OpenAI', '🟢 OpenAI API', '🦜 LangChain', '🦙 LlamaIndex', '📌 Pinecone', '🔬 Azure ML', '📈 MLflow', '🐘 pgvector'],
+  },
+  {
+    label: 'BI & Visualización',
+    items: ['📊 Power BI', '📈 Tableau', '🔢 DAX'],
+  },
+  {
+    label: 'APIs de Marketing',
+    items: ['🔴 Google Ads API', '🔵 Meta Ads API', '📱 TikTok API', '🟢 GA4 API'],
+  },
+];
+---
+
+<section id="stack">
+  <div class="container">
+    <div class="section-label fade-up">Stack tecnológico</div>
+    <h2 class="section-title fade-up">Herramientas que <span class="accent">domino.</span></h2>
+    <p class="section-sub fade-up">No colecciono tecnologías. Cada herramienta la he usado en producción.</p>
+
+    {groups.map(g => (
+      <div class="stack-group fade-up">
+        <div class="stack-group-title">{g.label}</div>
+        <div class="stack-items">
+          {g.items.map(i => <span class="stack-item">{i}</span>)}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .stack-group { margin-bottom: 2.5rem; }
+  .stack-group-title {
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .stack-items { display: flex; flex-wrap: wrap; gap: .75rem; }
+  .stack-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .6rem 1.1rem;
+    font-size: .88rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: all .25s;
+  }
+  .stack-item:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+</style>

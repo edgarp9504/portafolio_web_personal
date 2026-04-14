@@ -1,0 +1,78 @@
+---
+const testimonials = [
+  {
+    initials: 'MR',
+    name: 'María R.',
+    role: 'Directora de Marketing · Agencia Digital',
+    text: 'Edgar transformó completamente cómo manejamos nuestros datos de marketing. Lo que antes era un proceso manual de medio día, ahora se actualiza solo. El ROI fue inmediato.',
+  },
+  {
+    initials: 'CA',
+    name: 'Carlos A.',
+    role: 'CTO · Startup Fintech',
+    text: 'Contratamos a Edgar para una arquitectura en Azure. No solo entregó lo técnico, sino que nos explicó cada decisión en términos de negocio. Eso marca la diferencia con otros consultores.',
+  },
+  {
+    initials: 'LP',
+    name: 'Laura P.',
+    role: 'Gerente de Operaciones · Empresa Turística',
+    text: 'El sistema de reportes automáticos que Edgar construyó nos ahorró un fin de semana completo al mes. Ahora nuestra reunión del lunes empieza con datos frescos, no con suposiciones.',
+  },
+];
+---
+
+<section id="testimonials" class="bg2">
+  <div class="container">
+    <div class="section-label fade-up">Testimonios</div>
+    <h2 class="section-title fade-up">Lo que dicen <span class="accent">mis clientes.</span></h2>
+
+    <div class="grid-3 stagger">
+      {testimonials.map(t => (
+        <div class="testimonial-card fade-up">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">"{t.text}"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">{t.initials}</div>
+            <div>
+              <div class="author-name">{t.name}</div>
+              <div class="author-title">{t.role}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .bg2 { background: var(--bg2); }
+  .testimonial-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    position: relative;
+  }
+  .testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+    font-size: 4rem;
+    color: var(--accent);
+    opacity: .15;
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+  .stars { color: #fbbf24; font-size: .9rem; margin-bottom: .75rem; }
+  .testimonial-text { font-size: .92rem; color: var(--muted); margin-bottom: 1.25rem; font-style: italic; }
+  .testimonial-author { display: flex; align-items: center; gap: .75rem; }
+  .author-avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .9rem; color: #000; flex-shrink: 0;
+  }
+  .author-name  { font-size: .9rem; font-weight: 600; }
+  .author-title { font-size: .78rem; color: var(--muted); }
+</style>

@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="canonical" href="https://tudominio.com/blog/arquitectura-medallion-azure-databricks/"><title>Arquitectura Medallion en Azure Databricks: guía práctica con Delta Lake · Edgar Pérez</title><meta name="description" content="Implementación paso a paso de la arquitectura Bronze, Silver y Gold en Azure Databricks con Delta Lake. Desde la ingesta cruda hasta la capa analítica lista para Power BI."><meta name="robots" content="index, follow"><meta name="author" content="Edgar Pérez"><!-- Open Graph --><meta property="og:type" content="article"><meta property="og:url" content="https://tudominio.com/blog/arquitectura-medallion-azure-databricks/"><meta property="og:title" content="Arquitectura Medallion en Azure Databricks: guía práctica con Delta Lake · Edgar Pérez"><meta property="og:description" content="Implementación paso a paso de la arquitectura Bronze, Silver y Gold en Azure Databricks con Delta Lake. Desde la ingesta cruda hasta la capa analítica lista para Power BI."><meta property="og:image" content="https://tudominio.com/og-default.png"><meta property="og:locale" content="es_MX"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Arquitectura Medallion en Azure Databricks: guía práctica con Delta Lake · Edgar Pérez"><meta name="twitter:description" content="Implementación paso a paso de la arquitectura Bronze, Silver y Gold en Azure Databricks con Delta Lake. Desde la ingesta cruda hasta la capa analítica lista para Power BI."><meta name="twitter:image" content="https://tudominio.com/og-default.png"><meta property="article:published_time" content="2025-02-03T00:00:00.000Z"><!-- Sitemap & RSS --><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Blog · Edgar Pérez" href="/rss.xml"><!-- Schema.org --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","name":"Edgar Pérez","jobTitle":"Data Engineer & Cloud Consultant","url":"https://tudominio.com/","sameAs":["https://linkedin.com/in/edgar-perez","https://github.com/edgar-perez"],"address":{"@type":"PostalAddress","addressLocality":"Cancún","addressCountry":"MX"}}</script><link rel="stylesheet" href="/_astro/_slug_.DNQu_ttI.css">
+<style>.blog-nav[data-astro-cid-4dqtj3le]{position:sticky;top:0;z-index:100;background:#0a0e1aeb;backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:1rem 0}.blog-nav-inner[data-astro-cid-4dqtj3le]{display:flex;align-items:center;justify-content:space-between}.nav-logo[data-astro-cid-4dqtj3le]{font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none}.nav-logo[data-astro-cid-4dqtj3le] span[data-astro-cid-4dqtj3le]{color:var(--accent)}.back-link[data-astro-cid-4dqtj3le]{display:flex;align-items:center;gap:.5rem;color:var(--muted);text-decoration:none;font-size:.88rem;transition:color .2s}.back-link[data-astro-cid-4dqtj3le]:hover{color:var(--accent)}.blog-main[data-astro-cid-4dqtj3le]{padding:4rem 0 6rem}.blog-header[data-astro-cid-4dqtj3le]{max-width:720px;margin-bottom:2.5rem}.blog-tags-top[data-astro-cid-4dqtj3le]{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem}.blog-title[data-astro-cid-4dqtj3le]{font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:1rem;line-height:1.2}.blog-subtitle[data-astro-cid-4dqtj3le]{font-size:1.1rem;color:var(--muted);margin-bottom:1.75rem}.blog-meta[data-astro-cid-4dqtj3le]{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}.author-info[data-astro-cid-4dqtj3le]{display:flex;align-items:center;gap:.75rem}.author-avatar-sm[data-astro-cid-4dqtj3le]{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#000;flex-shrink:0}.author-name-sm[data-astro-cid-4dqtj3le]{font-size:.9rem;font-weight:600}.author-title-sm[data-astro-cid-4dqtj3le]{font-size:.78rem;color:var(--muted)}.blog-meta-right[data-astro-cid-4dqtj3le]{font-size:.85rem;color:var(--muted)}.blog-divider[data-astro-cid-4dqtj3le]{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:2.5rem 0}.post-footer[data-astro-cid-4dqtj3le]{max-width:720px}.post-cta[data-astro-cid-4dqtj3le]{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:2rem}.post-cta[data-astro-cid-4dqtj3le] h3[data-astro-cid-4dqtj3le]{margin-bottom:.5rem}.post-cta[data-astro-cid-4dqtj3le] p[data-astro-cid-4dqtj3le]{color:var(--muted);margin-bottom:1.5rem}.wa-float[data-astro-cid-4dqtj3le]{position:fixed;bottom:1.75rem;right:1.75rem;z-index:999;width:54px;height:54px;background:linear-gradient(135deg,#25d366,#128c7e);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px #25d36673;text-decoration:none;transition:transform .25s}.wa-float[data-astro-cid-4dqtj3le] svg[data-astro-cid-4dqtj3le]{width:26px;height:26px}.wa-float[data-astro-cid-4dqtj3le]:hover{transform:scale(1.1)}
+</style></head> <body>   <nav class="blog-nav" data-astro-cid-4dqtj3le> <div class="container blog-nav-inner" data-astro-cid-4dqtj3le> <a href="/" class="nav-logo" data-astro-cid-4dqtj3le>Edgar<span data-astro-cid-4dqtj3le>.</span>dev</a> <a href="/blog" class="back-link" data-astro-cid-4dqtj3le> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-astro-cid-4dqtj3le><path d="M19 12H5M12 5l-7 7 7 7" data-astro-cid-4dqtj3le></path></svg>
+Todos los artículos
+</a> </div> </nav> <main class="blog-main" data-astro-cid-4dqtj3le> <div class="container" data-astro-cid-4dqtj3le> <article data-astro-cid-4dqtj3le> <!-- Header --> <header class="blog-header" data-astro-cid-4dqtj3le> <div class="blog-tags-top" data-astro-cid-4dqtj3le> <span class="tag" data-astro-cid-4dqtj3le>Azure</span><span class="tag" data-astro-cid-4dqtj3le>Databricks</span><span class="tag" data-astro-cid-4dqtj3le>Delta Lake</span><span class="tag" data-astro-cid-4dqtj3le>Arquitectura Medallion</span><span class="tag" data-astro-cid-4dqtj3le>Data Engineering</span> </div> <h1 class="blog-title" data-astro-cid-4dqtj3le>Arquitectura Medallion en Azure Databricks: guía práctica con Delta Lake</h1> <p class="blog-subtitle" data-astro-cid-4dqtj3le>Implementación paso a paso de la arquitectura Bronze, Silver y Gold en Azure Databricks con Delta Lake. Desde la ingesta cruda hasta la capa analítica lista para Power BI.</p> <div class="blog-meta" data-astro-cid-4dqtj3le> <div class="author-info" data-astro-cid-4dqtj3le> <div class="author-avatar-sm" data-astro-cid-4dqtj3le>EP</div> <div data-astro-cid-4dqtj3le> <div class="author-name-sm" data-astro-cid-4dqtj3le>Edgar Pérez</div> <div class="author-title-sm" data-astro-cid-4dqtj3le>Data Engineer & Cloud Consultant</div> </div> </div> <div class="blog-meta-right" data-astro-cid-4dqtj3le> <span data-astro-cid-4dqtj3le>2 de febrero de 2025</span> <span data-astro-cid-4dqtj3le>· 10 min de lectura</span> </div> </div> </header> <div class="blog-divider" data-astro-cid-4dqtj3le></div> <!-- Content --> <div class="blog-prose" data-astro-cid-4dqtj3le>  <p>La arquitectura Medallion resuelve uno de los problemas más comunes que veo en empresas con datos: <strong>nadie sabe cuál es la “versión correcta” de los datos</strong>.</p>
+<p>¿El número de ventas del mes pasado que tiene el equipo de marketing coincide con el que tiene finanzas? Probablemente no. Eso es un problema de arquitectura, no de personas.</p>
+<p>En este artículo implemento la arquitectura Medallion completa sobre Azure Databricks con Delta Lake.</p>
+<h2 id="qué-es-la-arquitectura-medallion">Qué es la arquitectura Medallion</h2>
+<p>La Medallion Architecture (popularizada por Databricks) divide los datos en tres capas:</p>
+<ul>
+<li><strong>Bronze</strong>: datos crudos, tal cual llegan de la fuente. Nunca se modifican.</li>
+<li><strong>Silver</strong>: datos limpios, validados y con esquema estable.</li>
+<li><strong>Gold</strong>: datos agregados, listos para consumo analítico (Power BI, dashboards, ML).</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Fuentes → [Bronze] → [Silver] → [Gold] → Consumidores</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>La clave: cada capa es <strong>append-only</strong> hasta Silver. Gold puede recalcularse.</p>
+<h2 id="setup-inicial-en-azure">Setup inicial en Azure</h2>
+<h3 id="recursos-necesarios">Recursos necesarios</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Azure Subscription</span></span>
+<span class="line"><span>├── Resource Group: rg-datalake-prod</span></span>
+<span class="line"><span>│   ├── Azure Data Lake Storage Gen2 (ADLS)</span></span>
+<span class="line"><span>│   │   ├── Container: bronze</span></span>
+<span class="line"><span>│   │   ├── Container: silver</span></span>
+<span class="line"><span>│   │   └── Container: gold</span></span>
+<span class="line"><span>│   ├── Azure Databricks Workspace</span></span>
+<span class="line"><span>│   └── Azure Data Factory (orquestación)</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="montar-adls-en-databricks">Montar ADLS en Databricks</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># En un notebook de Databricks</span></span>
+<span class="line"><span style="color:#E1E4E8">configs </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">  "fs.azure.account.auth.type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"OAuth"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  "fs.azure.account.oauth.provider.type"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  "fs.azure.account.oauth2.client.id"</span><span style="color:#E1E4E8">:     dbutils.secrets.get(</span><span style="color:#9ECBFF">"kv-scope"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"client-id"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">  "fs.azure.account.oauth2.client.secret"</span><span style="color:#E1E4E8">: dbutils.secrets.get(</span><span style="color:#9ECBFF">"kv-scope"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"client-secret"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">  "fs.azure.account.oauth2.client.endpoint"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    f</span><span style="color:#9ECBFF">"https://login.microsoftonline.com/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">dbutils.secrets.get(</span><span style="color:#9ECBFF">'kv-scope'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'tenant-id'</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">/oauth2/token"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> zone </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"bronze"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"silver"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"gold"</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#E1E4E8">    dbutils.fs.mount(</span></span>
+<span class="line"><span style="color:#FFAB70">        source</span><span style="color:#F97583">=</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"abfss://</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">zone</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">@midatalake.dfs.core.windows.net/"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        mount_point</span><span style="color:#F97583">=</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"/mnt/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">zone</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        extra_configs</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">configs</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span></code></pre>
+<h2 id="capa-bronze-ingesta-sin-transformar">Capa Bronze: ingesta sin transformar</h2>
+<p>El principio fundamental: <strong>graba todo, transforma después</strong>.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pyspark.sql </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> functions </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> F</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> delta.tables </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> DeltaTable</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> datetime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> ingest_to_bronze</span><span style="color:#E1E4E8">(source_df, entity_name: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#9ECBFF">    Ingesta datos crudos al bronze con metadata de auditoría.</span></span>
+<span class="line"><span style="color:#9ECBFF">    No transforma nada — solo agrega columnas de control.</span></span>
+<span class="line"><span style="color:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#E1E4E8">    bronze_df </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> source_df.withColumns({</span></span>
+<span class="line"><span style="color:#9ECBFF">        "_ingestion_timestamp"</span><span style="color:#E1E4E8">: F.current_timestamp(),</span></span>
+<span class="line"><span style="color:#9ECBFF">        "_source_system"</span><span style="color:#E1E4E8">:       F.lit(</span><span style="color:#9ECBFF">"erp_api"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">        "_ingestion_date"</span><span style="color:#E1E4E8">:      F.current_date(),</span></span>
+<span class="line"><span style="color:#9ECBFF">        "_batch_id"</span><span style="color:#E1E4E8">:            F.lit(datetime.now().strftime(</span><span style="color:#9ECBFF">"%Y%m</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">_%H%M%S"</span><span style="color:#E1E4E8">)),</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    (</span></span>
+<span class="line"><span style="color:#E1E4E8">        bronze_df.write</span></span>
+<span class="line"><span style="color:#E1E4E8">        .format(</span><span style="color:#9ECBFF">"delta"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .mode(</span><span style="color:#9ECBFF">"append"</span><span style="color:#E1E4E8">)                              </span><span style="color:#6A737D"># siempre append, nunca overwrite</span></span>
+<span class="line"><span style="color:#E1E4E8">        .option(</span><span style="color:#9ECBFF">"mergeSchema"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"true"</span><span style="color:#E1E4E8">)               </span><span style="color:#6A737D"># acepta nuevas columnas del source</span></span>
+<span class="line"><span style="color:#E1E4E8">        .partitionBy(</span><span style="color:#9ECBFF">"_ingestion_date"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .save(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"/mnt/bronze/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">entity_name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"✅ Bronze: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">bronze_df.count()</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> registros → </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">entity_name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<blockquote>
+<p><strong>Punto clave</strong>: el <code>mergeSchema = true</code> permite que si la fuente agrega una columna nueva, Bronze la capture automáticamente sin fallar. Silver decide si propagarla o ignorarla.</p>
+</blockquote>
+<h2 id="capa-silver-limpieza-y-validación">Capa Silver: limpieza y validación</h2>
+<p>Silver es donde aplicamos las reglas de negocio, eliminamos duplicados y estandarizamos.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pyspark.sql.functions </span><span style="color:#F97583">import</span><span style="color:#F97583"> *</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pyspark.sql.types </span><span style="color:#F97583">import</span><span style="color:#F97583"> *</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> transform_orders_to_silver</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#9ECBFF">    Transforma la tabla de órdenes de Bronze a Silver.</span></span>
+<span class="line"><span style="color:#9ECBFF">    Aplica: deduplicación, casting, validaciones y estandarización.</span></span>
+<span class="line"><span style="color:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#E1E4E8">    bronze_df </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> spark.read.format(</span><span style="color:#9ECBFF">"delta"</span><span style="color:#E1E4E8">).load(</span><span style="color:#9ECBFF">"/mnt/bronze/orders"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    silver_df </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        bronze_df</span></span>
+<span class="line"><span style="color:#6A737D">        # 1. Deduplicar por clave de negocio, quedarse con el más reciente</span></span>
+<span class="line"><span style="color:#E1E4E8">        .withColumn(</span><span style="color:#9ECBFF">"_rank"</span><span style="color:#E1E4E8">, row_number().over(</span></span>
+<span class="line"><span style="color:#E1E4E8">            Window.partitionBy(</span><span style="color:#9ECBFF">"order_id"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                  .orderBy(desc(</span><span style="color:#9ECBFF">"_ingestion_timestamp"</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">        ))</span></span>
+<span class="line"><span style="color:#E1E4E8">        .filter(col(</span><span style="color:#9ECBFF">"_rank"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .drop(</span><span style="color:#9ECBFF">"_rank"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # 2. Castear y limpiar tipos</span></span>
+<span class="line"><span style="color:#E1E4E8">        .withColumn(</span><span style="color:#9ECBFF">"order_date"</span><span style="color:#E1E4E8">,  to_date(col(</span><span style="color:#9ECBFF">"order_date"</span><span style="color:#E1E4E8">), </span><span style="color:#9ECBFF">"yyyy-MM-dd"</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">        .withColumn(</span><span style="color:#9ECBFF">"total_amount"</span><span style="color:#E1E4E8">, col(</span><span style="color:#9ECBFF">"total_amount"</span><span style="color:#E1E4E8">).cast(DecimalType(</span><span style="color:#79B8FF">18</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)))</span></span>
+<span class="line"><span style="color:#E1E4E8">        .withColumn(</span><span style="color:#9ECBFF">"customer_id"</span><span style="color:#E1E4E8">, col(</span><span style="color:#9ECBFF">"customer_id"</span><span style="color:#E1E4E8">).cast(LongType()))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # 3. Normalizar strings</span></span>
+<span class="line"><span style="color:#E1E4E8">        .withColumn(</span><span style="color:#9ECBFF">"status"</span><span style="color:#E1E4E8">, upper(trim(col(</span><span style="color:#9ECBFF">"status"</span><span style="color:#E1E4E8">))))</span></span>
+<span class="line"><span style="color:#E1E4E8">        .withColumn(</span><span style="color:#9ECBFF">"currency"</span><span style="color:#E1E4E8">, upper(trim(col(</span><span style="color:#9ECBFF">"currency"</span><span style="color:#E1E4E8">))))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # 4. Filtrar registros inválidos y dejar constancia</span></span>
+<span class="line"><span style="color:#E1E4E8">        .filter(col(</span><span style="color:#9ECBFF">"order_id"</span><span style="color:#E1E4E8">).isNotNull())</span></span>
+<span class="line"><span style="color:#E1E4E8">        .filter(col(</span><span style="color:#9ECBFF">"total_amount"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # 5. Eliminar columnas de Bronze que no pertenecen a Silver</span></span>
+<span class="line"><span style="color:#E1E4E8">        .drop(</span><span style="color:#9ECBFF">"_ingestion_timestamp"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"_source_system"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"_batch_id"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .withColumn(</span><span style="color:#9ECBFF">"_silver_timestamp"</span><span style="color:#E1E4E8">, current_timestamp())</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Upsert con Delta MERGE (idempotente)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> DeltaTable.isDeltaTable(spark, </span><span style="color:#9ECBFF">"/mnt/silver/orders"</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">        target </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> DeltaTable.forPath(spark, </span><span style="color:#9ECBFF">"/mnt/silver/orders"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        (</span></span>
+<span class="line"><span style="color:#E1E4E8">            target.alias(</span><span style="color:#9ECBFF">"t"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            .merge(silver_df.alias(</span><span style="color:#9ECBFF">"s"</span><span style="color:#E1E4E8">), </span><span style="color:#9ECBFF">"t.order_id = s.order_id"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            .whenMatchedUpdateAll()</span></span>
+<span class="line"><span style="color:#E1E4E8">            .whenNotMatchedInsertAll()</span></span>
+<span class="line"><span style="color:#E1E4E8">            .execute()</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#F97583">    else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        silver_df.write.format(</span><span style="color:#9ECBFF">"delta"</span><span style="color:#E1E4E8">).save(</span><span style="color:#9ECBFF">"/mnt/silver/orders"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"✅ Silver: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">silver_df.count()</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> órdenes procesadas"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<h3 id="por-qué-usar-merge-en-silver">Por qué usar MERGE en Silver</h3>
+<p>El MERGE de Delta Lake hace que la transformación sea <strong>idempotente</strong>: puedes correrla dos veces y el resultado es el mismo. Esto es crítico para reprocessar datos históricos sin duplicar registros.</p>
+<h2 id="capa-gold-agregaciones-para-el-negocio">Capa Gold: agregaciones para el negocio</h2>
+<p>Gold produce las tablas que el negocio consume directamente. Una por cada “caso de uso” analítico.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> build_gold_sales_summary</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#9ECBFF">    Tabla Gold: resumen de ventas por día, categoría y región.</span></span>
+<span class="line"><span style="color:#9ECBFF">    Esta es exactamente la tabla que conecta Power BI.</span></span>
+<span class="line"><span style="color:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#E1E4E8">    orders   </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> spark.read.format(</span><span style="color:#9ECBFF">"delta"</span><span style="color:#E1E4E8">).load(</span><span style="color:#9ECBFF">"/mnt/silver/orders"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    products </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> spark.read.format(</span><span style="color:#9ECBFF">"delta"</span><span style="color:#E1E4E8">).load(</span><span style="color:#9ECBFF">"/mnt/silver/products"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    customers</span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> spark.read.format(</span><span style="color:#9ECBFF">"delta"</span><span style="color:#E1E4E8">).load(</span><span style="color:#9ECBFF">"/mnt/silver/customers"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    gold_df </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">        orders</span></span>
+<span class="line"><span style="color:#E1E4E8">        .join(products,  </span><span style="color:#9ECBFF">"product_id"</span><span style="color:#E1E4E8">,  </span><span style="color:#9ECBFF">"left"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .join(customers, </span><span style="color:#9ECBFF">"customer_id"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"left"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .groupBy(</span></span>
+<span class="line"><span style="color:#9ECBFF">            "order_date"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "category"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            customers.region</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">        .agg(</span></span>
+<span class="line"><span style="color:#E1E4E8">            count(</span><span style="color:#9ECBFF">"order_id"</span><span style="color:#E1E4E8">)               .alias(</span><span style="color:#9ECBFF">"num_orders"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#79B8FF">            sum</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"total_amount"</span><span style="color:#E1E4E8">)             .alias(</span><span style="color:#9ECBFF">"revenue"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">            avg(</span><span style="color:#9ECBFF">"total_amount"</span><span style="color:#E1E4E8">)             .alias(</span><span style="color:#9ECBFF">"avg_order_value"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">            countDistinct(</span><span style="color:#9ECBFF">"customer_id"</span><span style="color:#E1E4E8">)    .alias(</span><span style="color:#9ECBFF">"unique_customers"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">        .withColumn(</span><span style="color:#9ECBFF">"_gold_timestamp"</span><span style="color:#E1E4E8">, current_timestamp())</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Gold siempre se sobreescribe (es derivada)</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span></span>
+<span class="line"><span style="color:#E1E4E8">        gold_df.write</span></span>
+<span class="line"><span style="color:#E1E4E8">        .format(</span><span style="color:#9ECBFF">"delta"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .mode(</span><span style="color:#9ECBFF">"overwrite"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .option(</span><span style="color:#9ECBFF">"overwriteSchema"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"true"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .partitionBy(</span><span style="color:#9ECBFF">"order_date"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        .save(</span><span style="color:#9ECBFF">"/mnt/gold/sales_summary"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span></code></pre>
+<h2 id="orquestación-con-azure-data-factory">Orquestación con Azure Data Factory</h2>
+<p>El pipeline de ADF orquesta las tres capas en secuencia:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Trigger diario 2AM]</span></span>
+<span class="line"><span>    → Notebook Bronze (ingesta incremental)</span></span>
+<span class="line"><span>    → Notebook Silver (transform + merge)</span></span>
+<span class="line"><span>    → Notebook Gold   (rebuild agregaciones)</span></span>
+<span class="line"><span>    → Activity: enviar email de confirmación</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>La parte más importante: <strong>configurar los reintentos</strong>. Si Bronze falla (por timeout de API, por ejemplo), ADF reintenta 3 veces antes de alertar. Silver y Gold no corren si Bronze falló.</p>
+<h2 id="resultados-en-producción">Resultados en producción</h2>
+<p>Después de 6 meses con este sistema:</p>
+<ul>
+<li><strong>0 discrepancias</strong> entre los reportes de distintas áreas (todos leen de Gold)</li>
+<li><strong>Tiempo de preparación de datos</strong> para analistas: de 3 horas → 0 (los datos ya están listos)</li>
+<li><strong>Reproducibilidad</strong>: con Delta Time Travel, puedo reconstruir cualquier estado histórico con <code>VERSION AS OF</code></li>
+<li><strong>Costo</strong>: ~$320 USD/mes en compute (Databricks clusters apagados cuando no procesan)</li>
+</ul>
+<h2 id="el-comando-que-más-uso-en-producción">El comando que más uso en producción</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- Ver historial de cambios de una tabla Delta</span></span>
+<span class="line"><span style="color:#E1E4E8">DESCRIBE HISTORY delta.</span><span style="color:#9ECBFF">`/mnt/silver/orders`</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Recuperar datos de hace 7 días si algo salió mal</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> delta.</span><span style="color:#9ECBFF">`/mnt/silver/orders`</span><span style="color:#F97583"> TIMESTAMP</span><span style="color:#F97583"> AS</span><span style="color:#E1E4E8"> OF </span><span style="color:#9ECBFF">'2025-01-01'</span></span>
+<span class="line"></span></code></pre>
+<hr>
+<p>¿Tienes datos en Azure que necesitan gobernanza y estructura? <a href="https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20Medallion%20Architecture%20y%20me%20interesa%20implementarlo">Cuéntame tu caso.</a></p>  </div> <!-- Footer del post --> <div class="blog-divider" data-astro-cid-4dqtj3le></div> <div class="post-footer" data-astro-cid-4dqtj3le> <div class="post-cta" data-astro-cid-4dqtj3le> <h3 data-astro-cid-4dqtj3le>¿Te resultó útil este artículo?</h3> <p data-astro-cid-4dqtj3le>Si tienes un proyecto de datos o quieres automatizar tus procesos, hablemos.</p> <div class="btn-group" data-astro-cid-4dqtj3le> <a href="https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20tu%20art%C3%ADculo%20y%20me%20gustar%C3%ADa%20hablar" target="_blank" rel="noopener" class="btn btn-wa" data-astro-cid-4dqtj3le> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" data-astro-cid-4dqtj3le><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" data-astro-cid-4dqtj3le></path><path d="M11.997 1.003C6.006 1.003 1.097 5.91 1.097 11.9c0 1.91.498 3.698 1.368 5.246L1 22.997l5.98-1.442A10.853 10.853 0 0011.997 22.8c5.99 0 10.903-4.909 10.903-10.9 0-5.99-4.913-10.897-10.903-10.897zm0 19.797a8.953 8.953 0 01-4.556-1.243l-.327-.194-3.555.858.894-3.455-.213-.35A8.91 8.91 0 013.1 11.9c0-4.909 3.996-8.9 8.897-8.9 4.9 0 8.897 3.991 8.897 8.9 0 4.91-3.997 8.9-8.897 8.9z" data-astro-cid-4dqtj3le></path></svg>
+Hablar por WhatsApp
+</a> <a href="/#cta" class="btn btn-outline" data-astro-cid-4dqtj3le>Ver servicios</a> </div> </div> </div> </article> </div> </main>  <a class="wa-float" href="https://wa.me/529981234567" target="_blank" rel="noopener" aria-label="WhatsApp" data-astro-cid-4dqtj3le> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" data-astro-cid-4dqtj3le><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" data-astro-cid-4dqtj3le></path><path d="M11.997 1.003C6.006 1.003 1.097 5.91 1.097 11.9c0 1.91.498 3.698 1.368 5.246L1 22.997l5.98-1.442A10.853 10.853 0 0011.997 22.8c5.99 0 10.903-4.909 10.903-10.9 0-5.99-4.913-10.897-10.903-10.897zm0 19.797a8.953 8.953 0 01-4.556-1.243l-.327-.194-3.555.858.894-3.455-.213-.35A8.91 8.91 0 013.1 11.9c0-4.909 3.996-8.9 8.897-8.9 4.9 0 8.897 3.991 8.897 8.9 0 4.91-3.997 8.9-8.897 8.9z" data-astro-cid-4dqtj3le></path></svg> </a>  </body></html> 

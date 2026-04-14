@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav         from '../components/Nav.astro';
+import Hero        from '../components/Hero.astro';
+import About       from '../components/About.astro';
+import Services    from '../components/Services.astro';
+import AISection   from '../components/AISection.astro';
+import Projects    from '../components/Projects.astro';
+import Stack       from '../components/Stack.astro';
+import Testimonials from '../components/Testimonials.astro';
+import CTA         from '../components/CTA.astro';
+import Footer      from '../components/Footer.astro';
+import WAFloat     from '../components/WAFloat.astro';
+---
+
+<BaseLayout>
+  <Nav />
+  <Hero />
+  <div class="divider"></div>
+  <About />
+  <div class="divider"></div>
+  <Services />
+  <div class="divider"></div>
+  <AISection />
+  <div class="divider"></div>
+  <Projects />
+  <div class="divider"></div>
+  <Stack />
+  <div class="divider"></div>
+  <Testimonials />
+  <div class="divider"></div>
+  <CTA />
+  <Footer />
+  <WAFloat />
+</BaseLayout>
+
+<script>
+  // Fade-up IntersectionObserver — corre en todas las páginas
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>

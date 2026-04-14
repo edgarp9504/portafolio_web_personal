@@ -1,0 +1,39 @@
+---
+---
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">Edgar<span>.</span>dev</div>
+        <div class="footer-copy">© {new Date().getFullYear()} Edgar Pérez · Data Engineer & Cloud Consultant · Cancún, México</div>
+      </div>
+      <div class="footer-links">
+        <a href="https://linkedin.com/in/tu-perfil" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/tu-usuario" target="_blank" rel="noopener">GitHub</a>
+        <a href="/blog">Blog</a>
+        <a href="mailto:edgar@ejemplo.com">Email</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 0;
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .footer-logo { font-weight: 700; margin-bottom: .25rem; }
+  .footer-logo span { color: var(--accent); }
+  .footer-copy { font-size: .82rem; color: var(--muted); }
+  .footer-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: .88rem; transition: color .2s; }
+  .footer-links a:hover { color: var(--accent); }
+</style>

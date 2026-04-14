@@ -1,0 +1,107 @@
+---
+const services = [
+  {
+    icon: '⚙️',
+    title: 'Data Engineering',
+    problem: 'Datos dispersos, sin confianza ni gobernanza',
+    solution: 'Pipelines ETL/ELT robustos y arquitectura Medallion',
+    desc: 'Diseño y construyo arquitecturas Bronze → Silver → Gold que centralizan y limpian tus datos para que sean confiables, reutilizables y escalables.',
+    tags: ['Azure Data Factory', 'AWS Glue', 'Databricks', 'PySpark', 'Delta Lake'],
+  },
+  {
+    icon: '📣',
+    title: 'Automatización de Marketing Data',
+    problem: 'Reportes manuales que consumen días de trabajo',
+    solution: 'Datos de ads actualizados automáticamente cada hora',
+    desc: 'Integro las APIs de Google Ads, Meta Ads, TikTok y GA4 en tu data warehouse. Tu equipo toma decisiones con datos de hoy, no de la semana pasada.',
+    tags: ['Google Ads API', 'Meta API', 'GA4', 'TikTok API', 'Python'],
+  },
+  {
+    icon: '📈',
+    title: 'Dashboards & BI',
+    problem: 'Excel interminable y sin visibilidad en tiempo real',
+    solution: 'Dashboards conectados que cualquier área puede leer',
+    desc: 'Construyo dashboards en Power BI y Tableau conectados a tus fuentes de datos. Diseñados para que el equipo directivo entienda el negocio de un vistazo.',
+    tags: ['Power BI', 'Tableau', 'DAX', 'Semántica de datos'],
+  },
+  {
+    icon: '🔌',
+    title: 'Integraciones API',
+    problem: 'Sistemas que no se hablan entre sí',
+    solution: 'Flujos automatizados entre todas tus plataformas',
+    desc: 'Desarrollo conectores e integraciones personalizadas con FastAPI, Lambda y Azure Functions para que tus herramientas compartan información sin trabajo manual.',
+    tags: ['FastAPI', 'AWS Lambda', 'REST APIs', 'Webhooks', 'Azure Functions'],
+  },
+  {
+    icon: '🏗️',
+    title: 'Consultoría de Arquitectura Cloud',
+    problem: 'Costos de nube elevados y deuda técnica acumulada',
+    solution: 'Arquitectura optimizada, bien documentada y escalable',
+    desc: 'Audito tu arquitectura actual, identifico cuellos de botella y rediseño el stack para que sea más eficiente y económico — sin tirar lo que ya funciona.',
+    tags: ['Azure Synapse', 'Redshift', 'Snowflake', 'Cost optimization'],
+  },
+];
+---
+
+<section id="services">
+  <div class="container">
+    <div class="section-label fade-up">Servicios</div>
+    <h2 class="section-title fade-up">¿En qué puedo <span class="accent">ayudarte?</span></h2>
+    <p class="section-sub fade-up">Soluciones de datos end-to-end, desde la extracción hasta el dashboard.</p>
+
+    <div class="grid-3 stagger">
+      {services.map(s => (
+        <div class="service-card fade-up">
+          <span class="service-icon">{s.icon}</span>
+          <h3>{s.title}</h3>
+          <span class="service-problem">❌ {s.problem}</span>
+          <span class="service-solution">✅ {s.solution}</span>
+          <p>{s.desc}</p>
+          <div class="tags-row">
+            {s.tags.map(t => <span class="tag">{t}</span>)}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform .3s;
+  }
+  .service-card:hover { border-color: rgba(0,212,255,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
+  .service-card:hover::after { transform: scaleX(1); }
+
+  .service-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+  .service-card h3 { margin-bottom: .75rem; }
+
+  .service-problem,
+  .service-solution {
+    display: inline-block;
+    font-size: .8rem;
+    border-radius: 6px;
+    padding: .3rem .7rem;
+    margin-bottom: .4rem;
+  }
+  .service-problem { color: #ef4444; background: rgba(239,68,68,.08); }
+  .service-solution { color: var(--accent2); background: rgba(0,255,136,.08); }
+
+  .service-card p { font-size: .88rem; color: var(--muted); margin-top: .5rem; }
+  .tags-row { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
+</style>

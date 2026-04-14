@@ -1,0 +1,258 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="canonical" href="https://tudominio.com/blog/rag-empresarial-azure-openai/"><title>RAG Empresarial con Azure OpenAI: cómo construí un chatbot sobre 5 años de documentación interna · Edgar Pérez</title><meta name="description" content="Guía práctica de implementación de un sistema RAG (Retrieval-Augmented Generation) con Azure OpenAI, LangChain y Pinecone. Desde los embeddings hasta la API en producción."><meta name="robots" content="index, follow"><meta name="author" content="Edgar Pérez"><!-- Open Graph --><meta property="og:type" content="article"><meta property="og:url" content="https://tudominio.com/blog/rag-empresarial-azure-openai/"><meta property="og:title" content="RAG Empresarial con Azure OpenAI: cómo construí un chatbot sobre 5 años de documentación interna · Edgar Pérez"><meta property="og:description" content="Guía práctica de implementación de un sistema RAG (Retrieval-Augmented Generation) con Azure OpenAI, LangChain y Pinecone. Desde los embeddings hasta la API en producción."><meta property="og:image" content="https://tudominio.com/og-default.png"><meta property="og:locale" content="es_MX"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="RAG Empresarial con Azure OpenAI: cómo construí un chatbot sobre 5 años de documentación interna · Edgar Pérez"><meta name="twitter:description" content="Guía práctica de implementación de un sistema RAG (Retrieval-Augmented Generation) con Azure OpenAI, LangChain y Pinecone. Desde los embeddings hasta la API en producción."><meta name="twitter:image" content="https://tudominio.com/og-default.png"><meta property="article:published_time" content="2025-03-10T00:00:00.000Z"><!-- Sitemap & RSS --><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Blog · Edgar Pérez" href="/rss.xml"><!-- Schema.org --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","name":"Edgar Pérez","jobTitle":"Data Engineer & Cloud Consultant","url":"https://tudominio.com/","sameAs":["https://linkedin.com/in/edgar-perez","https://github.com/edgar-perez"],"address":{"@type":"PostalAddress","addressLocality":"Cancún","addressCountry":"MX"}}</script><link rel="stylesheet" href="/_astro/_slug_.DNQu_ttI.css">
+<style>.blog-nav[data-astro-cid-4dqtj3le]{position:sticky;top:0;z-index:100;background:#0a0e1aeb;backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:1rem 0}.blog-nav-inner[data-astro-cid-4dqtj3le]{display:flex;align-items:center;justify-content:space-between}.nav-logo[data-astro-cid-4dqtj3le]{font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none}.nav-logo[data-astro-cid-4dqtj3le] span[data-astro-cid-4dqtj3le]{color:var(--accent)}.back-link[data-astro-cid-4dqtj3le]{display:flex;align-items:center;gap:.5rem;color:var(--muted);text-decoration:none;font-size:.88rem;transition:color .2s}.back-link[data-astro-cid-4dqtj3le]:hover{color:var(--accent)}.blog-main[data-astro-cid-4dqtj3le]{padding:4rem 0 6rem}.blog-header[data-astro-cid-4dqtj3le]{max-width:720px;margin-bottom:2.5rem}.blog-tags-top[data-astro-cid-4dqtj3le]{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem}.blog-title[data-astro-cid-4dqtj3le]{font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:1rem;line-height:1.2}.blog-subtitle[data-astro-cid-4dqtj3le]{font-size:1.1rem;color:var(--muted);margin-bottom:1.75rem}.blog-meta[data-astro-cid-4dqtj3le]{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}.author-info[data-astro-cid-4dqtj3le]{display:flex;align-items:center;gap:.75rem}.author-avatar-sm[data-astro-cid-4dqtj3le]{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#000;flex-shrink:0}.author-name-sm[data-astro-cid-4dqtj3le]{font-size:.9rem;font-weight:600}.author-title-sm[data-astro-cid-4dqtj3le]{font-size:.78rem;color:var(--muted)}.blog-meta-right[data-astro-cid-4dqtj3le]{font-size:.85rem;color:var(--muted)}.blog-divider[data-astro-cid-4dqtj3le]{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:2.5rem 0}.post-footer[data-astro-cid-4dqtj3le]{max-width:720px}.post-cta[data-astro-cid-4dqtj3le]{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:2rem}.post-cta[data-astro-cid-4dqtj3le] h3[data-astro-cid-4dqtj3le]{margin-bottom:.5rem}.post-cta[data-astro-cid-4dqtj3le] p[data-astro-cid-4dqtj3le]{color:var(--muted);margin-bottom:1.5rem}.wa-float[data-astro-cid-4dqtj3le]{position:fixed;bottom:1.75rem;right:1.75rem;z-index:999;width:54px;height:54px;background:linear-gradient(135deg,#25d366,#128c7e);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px #25d36673;text-decoration:none;transition:transform .25s}.wa-float[data-astro-cid-4dqtj3le] svg[data-astro-cid-4dqtj3le]{width:26px;height:26px}.wa-float[data-astro-cid-4dqtj3le]:hover{transform:scale(1.1)}
+</style></head> <body>   <nav class="blog-nav" data-astro-cid-4dqtj3le> <div class="container blog-nav-inner" data-astro-cid-4dqtj3le> <a href="/" class="nav-logo" data-astro-cid-4dqtj3le>Edgar<span data-astro-cid-4dqtj3le>.</span>dev</a> <a href="/blog" class="back-link" data-astro-cid-4dqtj3le> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-astro-cid-4dqtj3le><path d="M19 12H5M12 5l-7 7 7 7" data-astro-cid-4dqtj3le></path></svg>
+Todos los artículos
+</a> </div> </nav> <main class="blog-main" data-astro-cid-4dqtj3le> <div class="container" data-astro-cid-4dqtj3le> <article data-astro-cid-4dqtj3le> <!-- Header --> <header class="blog-header" data-astro-cid-4dqtj3le> <div class="blog-tags-top" data-astro-cid-4dqtj3le> <span class="tag" data-astro-cid-4dqtj3le>IA</span><span class="tag" data-astro-cid-4dqtj3le>RAG</span><span class="tag" data-astro-cid-4dqtj3le>Azure OpenAI</span><span class="tag" data-astro-cid-4dqtj3le>LangChain</span><span class="tag" data-astro-cid-4dqtj3le>Python</span> </div> <h1 class="blog-title" data-astro-cid-4dqtj3le>RAG Empresarial con Azure OpenAI: cómo construí un chatbot sobre 5 años de documentación interna</h1> <p class="blog-subtitle" data-astro-cid-4dqtj3le>Guía práctica de implementación de un sistema RAG (Retrieval-Augmented Generation) con Azure OpenAI, LangChain y Pinecone. Desde los embeddings hasta la API en producción.</p> <div class="blog-meta" data-astro-cid-4dqtj3le> <div class="author-info" data-astro-cid-4dqtj3le> <div class="author-avatar-sm" data-astro-cid-4dqtj3le>EP</div> <div data-astro-cid-4dqtj3le> <div class="author-name-sm" data-astro-cid-4dqtj3le>Edgar Pérez</div> <div class="author-title-sm" data-astro-cid-4dqtj3le>Data Engineer & Cloud Consultant</div> </div> </div> <div class="blog-meta-right" data-astro-cid-4dqtj3le> <span data-astro-cid-4dqtj3le>9 de marzo de 2025</span> <span data-astro-cid-4dqtj3le>· 12 min de lectura</span> </div> </div> </header> <div class="blog-divider" data-astro-cid-4dqtj3le></div> <!-- Content --> <div class="blog-prose" data-astro-cid-4dqtj3le>  <p>El cliente tenía <strong>5 años de documentación interna</strong>: SOPs, contratos, manuales de producto, reportes de proyectos. Todo en PDFs y Word en SharePoint. Nadie los leía. Nadie sabía dónde estaba lo que necesitaba.</p>
+<p>La solución no era un buscador. Era un sistema que entendiera preguntas en lenguaje natural y respondiera con la información específica del documento correcto.</p>
+<p>Eso es RAG. Y en este artículo te muestro cómo lo construí.</p>
+<h2 id="qué-es-rag-y-por-qué-no-es-solo-subir-documentos-a-chatgpt">Qué es RAG y por qué no es solo “subir documentos a ChatGPT”</h2>
+<p>RAG (Retrieval-Augmented Generation) combina dos componentes:</p>
+<ol>
+<li><strong>Retrieval</strong>: buscar los fragmentos relevantes de tus documentos usando búsqueda semántica (embeddings + base vectorial)</li>
+<li><strong>Generation</strong>: usar un LLM para generar una respuesta usando esos fragmentos como contexto</li>
+</ol>
+<p>La diferencia con “subir un PDF a ChatGPT”:</p>
+<ul>
+<li><strong>Escala</strong>: funciona con miles de documentos, no solo uno</li>
+<li><strong>Privacidad</strong>: los datos nunca salen de tu infraestructura Azure</li>
+<li><strong>Actualización</strong>: agregar nuevos documentos es automático</li>
+<li><strong>Trazabilidad</strong>: sabes exactamente qué fragmento generó qué respuesta</li>
+</ul>
+<h2 id="arquitectura-del-sistema">Arquitectura del sistema</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[SharePoint / PDFs] </span></span>
+<span class="line"><span>        ↓</span></span>
+<span class="line"><span>[Document Processor] → chunking + cleaning</span></span>
+<span class="line"><span>        ↓</span></span>
+<span class="line"><span>[Azure OpenAI Embeddings] → text-embedding-ada-002</span></span>
+<span class="line"><span>        ↓</span></span>
+<span class="line"><span>[Pinecone] → almacén vectorial</span></span>
+<span class="line"><span>        ↑</span></span>
+<span class="line"><span>[FastAPI] ← query del usuario</span></span>
+<span class="line"><span>        ↓</span></span>
+<span class="line"><span>[Similarity Search] → top-5 chunks relevantes</span></span>
+<span class="line"><span>        ↓</span></span>
+<span class="line"><span>[Azure OpenAI GPT-4] → genera respuesta con contexto</span></span>
+<span class="line"><span>        ↓</span></span>
+<span class="line"><span>[Respuesta + referencias al documento fuente]</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="paso-1-procesar-e-indexar-los-documentos">Paso 1: Procesar e indexar los documentos</h2>
+<p>La parte más crítica (y menos glamorosa) es el preprocessing. La calidad del chunking determina la calidad de las respuestas.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pathlib </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Path</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.document_loaders </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> PyPDFLoader, Docx2txtLoader</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.text_splitter </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> RecursiveCharacterTextSplitter</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.embeddings </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> AzureOpenAIEmbeddings</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.vectorstores </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Pinecone </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> PineconeStore</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> pinecone</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Configuración</span></span>
+<span class="line"><span style="color:#E1E4E8">embeddings </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> AzureOpenAIEmbeddings(</span></span>
+<span class="line"><span style="color:#FFAB70">    azure_deployment</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"text-embedding-ada-002"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    azure_endpoint</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">os.environ[</span><span style="color:#9ECBFF">"AZURE_OPENAI_ENDPOINT"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    api_key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">os.environ[</span><span style="color:#9ECBFF">"AZURE_OPENAI_KEY"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    api_version</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"2024-02-01"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Splitter: chunks de 1000 chars con 200 de overlap</span></span>
+<span class="line"><span style="color:#6A737D"># El overlap evita que la información se "corte" entre chunks</span></span>
+<span class="line"><span style="color:#E1E4E8">splitter </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> RecursiveCharacterTextSplitter(</span></span>
+<span class="line"><span style="color:#FFAB70">    chunk_size</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    chunk_overlap</span><span style="color:#F97583">=</span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    separators</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\n\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"."</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">" "</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> process_document</span><span style="color:#E1E4E8">(file_path: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> list[</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#9ECBFF">    """Carga, divide y prepara un documento para indexación."""</span></span>
+<span class="line"><span style="color:#E1E4E8">    path </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(file_path)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> path.suffix </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> ".pdf"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        loader </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> PyPDFLoader(file_path)</span></span>
+<span class="line"><span style="color:#F97583">    elif</span><span style="color:#E1E4E8"> path.suffix </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">".docx"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">".doc"</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">        loader </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Docx2txtLoader(file_path)</span></span>
+<span class="line"><span style="color:#F97583">    else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> ValueError</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"Formato no soportado: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">path.suffix</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    docs   </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> loader.load()</span></span>
+<span class="line"><span style="color:#E1E4E8">    chunks </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> splitter.split_documents(docs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Enriquecer metadata para trazabilidad</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i, chunk </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> enumerate</span><span style="color:#E1E4E8">(chunks):</span></span>
+<span class="line"><span style="color:#E1E4E8">        chunk.metadata.update({</span></span>
+<span class="line"><span style="color:#9ECBFF">            "source_file"</span><span style="color:#E1E4E8">: path.name,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "chunk_index"</span><span style="color:#E1E4E8">: i,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "total_chunks"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(chunks),</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> chunks</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> index_directory</span><span style="color:#E1E4E8">(docs_path: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#9ECBFF">    """Indexa todos los documentos de un directorio en Pinecone."""</span></span>
+<span class="line"><span style="color:#E1E4E8">    pinecone.init(</span></span>
+<span class="line"><span style="color:#FFAB70">        api_key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">os.environ[</span><span style="color:#9ECBFF">"PINECONE_API_KEY"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">        environment</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">os.environ[</span><span style="color:#9ECBFF">"PINECONE_ENV"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    all_chunks </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#FFAB70"> file</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> Path(docs_path).glob(</span><span style="color:#9ECBFF">"**/*.{pdf,docx}"</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"Procesando: </span><span style="color:#79B8FF">{</span><span style="color:#FFAB70">file</span><span style="color:#E1E4E8">.name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        chunks </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> process_document(</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">file</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">        all_chunks.extend(chunks)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"  → </span><span style="color:#79B8FF">{len</span><span style="color:#E1E4E8">(chunks)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> chunks"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Subir a Pinecone en batches</span></span>
+<span class="line"><span style="color:#E1E4E8">    vectorstore </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> PineconeStore.from_documents(</span></span>
+<span class="line"><span style="color:#FFAB70">        documents</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">all_chunks,</span></span>
+<span class="line"><span style="color:#FFAB70">        embedding</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">embeddings,</span></span>
+<span class="line"><span style="color:#FFAB70">        index_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"empresa-docs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✅ Total indexado: </span><span style="color:#79B8FF">{len</span><span style="color:#E1E4E8">(all_chunks)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> chunks"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> vectorstore</span></span>
+<span class="line"></span></code></pre>
+<h2 id="paso-2-el-motor-de-consultas">Paso 2: El motor de consultas</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.chat_models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> AzureChatOpenAI</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.chains </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> ConversationalRetrievalChain</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.memory </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> ConversationBufferWindowMemory</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.prompts </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> PromptTemplate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">llm </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> AzureChatOpenAI(</span></span>
+<span class="line"><span style="color:#FFAB70">    azure_deployment</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"gpt-4"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    azure_endpoint</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">os.environ[</span><span style="color:#9ECBFF">"AZURE_OPENAI_ENDPOINT"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    api_key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">os.environ[</span><span style="color:#9ECBFF">"AZURE_OPENAI_KEY"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    api_version</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"2024-02-01"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    temperature</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0.1</span><span style="color:#E1E4E8">,   </span><span style="color:#6A737D"># bajo para respuestas más precisas y reproducibles</span></span>
+<span class="line"><span style="color:#FFAB70">    max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1500</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Prompt personalizado — CRÍTICO para el comportamiento del sistema</span></span>
+<span class="line"><span style="color:#79B8FF">SYSTEM_PROMPT</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> PromptTemplate(</span></span>
+<span class="line"><span style="color:#FFAB70">    input_variables</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">"context"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"question"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    template</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"""Eres un asistente experto en la documentación interna de la empresa.</span></span>
+<span class="line"><span style="color:#9ECBFF">Responde SOLO basándote en el contexto proporcionado.</span></span>
+<span class="line"><span style="color:#9ECBFF">Si la información no está en el contexto, di exactamente: "No encontré información sobre eso en la documentación disponible."</span></span>
+<span class="line"><span style="color:#9ECBFF">No inventes información ni uses conocimiento externo.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">Contexto de los documentos:</span></span>
+<span class="line"><span style="color:#79B8FF">{context}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">Pregunta: </span><span style="color:#79B8FF">{question}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">Respuesta (incluye el nombre del documento fuente cuando sea posible):"""</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> create_rag_chain</span><span style="color:#E1E4E8">(vectorstore):</span></span>
+<span class="line"><span style="color:#E1E4E8">    memory </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ConversationBufferWindowMemory(</span></span>
+<span class="line"><span style="color:#FFAB70">        memory_key</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"chat_history"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        return_messages</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># recuerda las últimas 5 interacciones</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    retriever </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> vectorstore.as_retriever(</span></span>
+<span class="line"><span style="color:#FFAB70">        search_type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"similarity"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        search_kwargs</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"k"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">},  </span><span style="color:#6A737D"># top 5 chunks más relevantes</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    chain </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ConversationalRetrievalChain.from_llm(</span></span>
+<span class="line"><span style="color:#FFAB70">        llm</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">llm,</span></span>
+<span class="line"><span style="color:#FFAB70">        retriever</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">retriever,</span></span>
+<span class="line"><span style="color:#FFAB70">        memory</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory,</span></span>
+<span class="line"><span style="color:#FFAB70">        combine_docs_chain_kwargs</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"prompt"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">SYSTEM_PROMPT</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#FFAB70">        return_source_documents</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># para mostrar las referencias</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> chain</span></span>
+<span class="line"></span></code></pre>
+<h2 id="paso-3-api-con-fastapi">Paso 3: API con FastAPI</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastapi </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastAPI, HTTPException</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pydantic </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BaseModel</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> typing </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Optional</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> uvicorn</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> FastAPI(</span><span style="color:#FFAB70">title</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"RAG Empresarial API"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Inicializar una sola vez al arrancar</span></span>
+<span class="line"><span style="color:#E1E4E8">vectorstore </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> PineconeStore.from_existing_index(</span></span>
+<span class="line"><span style="color:#FFAB70">    index_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"empresa-docs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    embedding</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">embeddings,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">chain </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> create_rag_chain(vectorstore)</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> QueryRequest</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">BaseModel</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">    question: </span><span style="color:#79B8FF">str</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_id: Optional[</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "default"</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> QueryResponse</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">BaseModel</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">    answer:   </span><span style="color:#79B8FF">str</span></span>
+<span class="line"><span style="color:#E1E4E8">    sources:  list[</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_id: </span><span style="color:#79B8FF">str</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@app.post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/query"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">response_model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">QueryResponse)</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> query</span><span style="color:#E1E4E8">(request: QueryRequest):</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> request.question.strip():</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#E1E4E8"> HTTPException(</span><span style="color:#FFAB70">status_code</span><span style="color:#F97583">=</span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">detail</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"La pregunta no puede estar vacía"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> chain({</span><span style="color:#9ECBFF">"question"</span><span style="color:#E1E4E8">: request.question})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Extraer nombres de documentos fuente únicos</span></span>
+<span class="line"><span style="color:#E1E4E8">    sources </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> list</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        doc.metadata.get(</span><span style="color:#9ECBFF">"source_file"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"Desconocido"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> doc </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> result.get(</span><span style="color:#9ECBFF">"source_documents"</span><span style="color:#E1E4E8">, [])</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> QueryResponse(</span></span>
+<span class="line"><span style="color:#FFAB70">        answer</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">result[</span><span style="color:#9ECBFF">"answer"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">        sources</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">sources,</span></span>
+<span class="line"><span style="color:#FFAB70">        session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">request.session_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@app.get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/health"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> health</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"status"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ok"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span></code></pre>
+<h2 id="resultados-y-métricas-en-producción">Resultados y métricas en producción</h2>
+<p>Después de 2 meses en producción con 45 usuarios:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td>Tiempo promedio de respuesta</td><td>2.1 segundos</td></tr><tr><td>Precisión (evaluación humana)</td><td>91%</td></tr><tr><td>Preguntas respondidas/día</td><td>~120</td></tr><tr><td>Reducción de tickets internos de búsqueda</td><td>-68%</td></tr><tr><td>Documentos indexados</td><td>847</td></tr><tr><td>Costo Azure OpenAI mensual</td><td>$89 USD</td></tr></tbody></table>
+<p>El <strong>costo de $89 USD/mes</strong> para eliminar el equivalente a 3-4 horas/día de búsqueda manual es el ROI más claro que he medido.</p>
+<h2 id="las-3-cosas-que-marcan-la-diferencia">Las 3 cosas que marcan la diferencia</h2>
+<p><strong>1. El chunking es más importante que el LLM.</strong> Pasé más tiempo optimizando cómo dividir los documentos que eligiendo el modelo. Un chunk mal cortado da una respuesta mal informada, sin importar qué LLM uses.</p>
+<p><strong>2. El prompt del sistema define el comportamiento.</strong> La instrucción <code>"Si la información no está en el contexto, di exactamente..."</code> evita alucinaciones. Los LLMs tienden a inventar si no les das una salida clara.</p>
+<p><strong>3. Guarda los documentos fuente en la respuesta.</strong> La confianza del usuario sube dramáticamente cuando puede ver “esta respuesta viene del documento X, página Y”. La trazabilidad no es opcional.</p>
+<hr>
+<p>¿Tienes documentación interna que tu equipo no puede aprovechar? <a href="https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20RAG%20y%20me%20interesa%20implementarlo%20en%20mi%20empresa">Hablemos de implementar RAG en tu empresa.</a></p>  </div> <!-- Footer del post --> <div class="blog-divider" data-astro-cid-4dqtj3le></div> <div class="post-footer" data-astro-cid-4dqtj3le> <div class="post-cta" data-astro-cid-4dqtj3le> <h3 data-astro-cid-4dqtj3le>¿Te resultó útil este artículo?</h3> <p data-astro-cid-4dqtj3le>Si tienes un proyecto de datos o quieres automatizar tus procesos, hablemos.</p> <div class="btn-group" data-astro-cid-4dqtj3le> <a href="https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20tu%20art%C3%ADculo%20y%20me%20gustar%C3%ADa%20hablar" target="_blank" rel="noopener" class="btn btn-wa" data-astro-cid-4dqtj3le> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" data-astro-cid-4dqtj3le><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" data-astro-cid-4dqtj3le></path><path d="M11.997 1.003C6.006 1.003 1.097 5.91 1.097 11.9c0 1.91.498 3.698 1.368 5.246L1 22.997l5.98-1.442A10.853 10.853 0 0011.997 22.8c5.99 0 10.903-4.909 10.903-10.9 0-5.99-4.913-10.897-10.903-10.897zm0 19.797a8.953 8.953 0 01-4.556-1.243l-.327-.194-3.555.858.894-3.455-.213-.35A8.91 8.91 0 013.1 11.9c0-4.909 3.996-8.9 8.897-8.9 4.9 0 8.897 3.991 8.897 8.9 0 4.91-3.997 8.9-8.897 8.9z" data-astro-cid-4dqtj3le></path></svg>
+Hablar por WhatsApp
+</a> <a href="/#cta" class="btn btn-outline" data-astro-cid-4dqtj3le>Ver servicios</a> </div> </div> </div> </article> </div> </main>  <a class="wa-float" href="https://wa.me/529981234567" target="_blank" rel="noopener" aria-label="WhatsApp" data-astro-cid-4dqtj3le> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" data-astro-cid-4dqtj3le><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" data-astro-cid-4dqtj3le></path><path d="M11.997 1.003C6.006 1.003 1.097 5.91 1.097 11.9c0 1.91.498 3.698 1.368 5.246L1 22.997l5.98-1.442A10.853 10.853 0 0011.997 22.8c5.99 0 10.903-4.909 10.903-10.9 0-5.99-4.913-10.897-10.903-10.897zm0 19.797a8.953 8.953 0 01-4.556-1.243l-.327-.194-3.555.858.894-3.455-.213-.35A8.91 8.91 0 013.1 11.9c0-4.909 3.996-8.9 8.897-8.9 4.9 0 8.897 3.991 8.897 8.9 0 4.91-3.997 8.9-8.897 8.9z" data-astro-cid-4dqtj3le></path></svg> </a>  </body></html> 

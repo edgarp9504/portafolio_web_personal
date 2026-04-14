@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="canonical" href="https://tudominio.com/blog/aws-glue-etl-reportes/"><title>De 3 días a 15 minutos: cómo reconstruí el ETL de un e-commerce con AWS Glue · Edgar Pérez</title><meta name="description" content="Caso real de cómo reemplazé un proceso manual de reportes con un pipeline automático en AWS Glue + PySpark + Redshift. Incluye arquitectura, código y lecciones aprendidas."><meta name="robots" content="index, follow"><meta name="author" content="Edgar Pérez"><!-- Open Graph --><meta property="og:type" content="article"><meta property="og:url" content="https://tudominio.com/blog/aws-glue-etl-reportes/"><meta property="og:title" content="De 3 días a 15 minutos: cómo reconstruí el ETL de un e-commerce con AWS Glue · Edgar Pérez"><meta property="og:description" content="Caso real de cómo reemplazé un proceso manual de reportes con un pipeline automático en AWS Glue + PySpark + Redshift. Incluye arquitectura, código y lecciones aprendidas."><meta property="og:image" content="https://tudominio.com/og-default.png"><meta property="og:locale" content="es_MX"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="De 3 días a 15 minutos: cómo reconstruí el ETL de un e-commerce con AWS Glue · Edgar Pérez"><meta name="twitter:description" content="Caso real de cómo reemplazé un proceso manual de reportes con un pipeline automático en AWS Glue + PySpark + Redshift. Incluye arquitectura, código y lecciones aprendidas."><meta name="twitter:image" content="https://tudominio.com/og-default.png"><meta property="article:published_time" content="2025-01-15T00:00:00.000Z"><!-- Sitemap & RSS --><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Blog · Edgar Pérez" href="/rss.xml"><!-- Schema.org --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","name":"Edgar Pérez","jobTitle":"Data Engineer & Cloud Consultant","url":"https://tudominio.com/","sameAs":["https://linkedin.com/in/edgar-perez","https://github.com/edgar-perez"],"address":{"@type":"PostalAddress","addressLocality":"Cancún","addressCountry":"MX"}}</script><link rel="stylesheet" href="/_astro/_slug_.DNQu_ttI.css">
+<style>.blog-nav[data-astro-cid-4dqtj3le]{position:sticky;top:0;z-index:100;background:#0a0e1aeb;backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:1rem 0}.blog-nav-inner[data-astro-cid-4dqtj3le]{display:flex;align-items:center;justify-content:space-between}.nav-logo[data-astro-cid-4dqtj3le]{font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none}.nav-logo[data-astro-cid-4dqtj3le] span[data-astro-cid-4dqtj3le]{color:var(--accent)}.back-link[data-astro-cid-4dqtj3le]{display:flex;align-items:center;gap:.5rem;color:var(--muted);text-decoration:none;font-size:.88rem;transition:color .2s}.back-link[data-astro-cid-4dqtj3le]:hover{color:var(--accent)}.blog-main[data-astro-cid-4dqtj3le]{padding:4rem 0 6rem}.blog-header[data-astro-cid-4dqtj3le]{max-width:720px;margin-bottom:2.5rem}.blog-tags-top[data-astro-cid-4dqtj3le]{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem}.blog-title[data-astro-cid-4dqtj3le]{font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:1rem;line-height:1.2}.blog-subtitle[data-astro-cid-4dqtj3le]{font-size:1.1rem;color:var(--muted);margin-bottom:1.75rem}.blog-meta[data-astro-cid-4dqtj3le]{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}.author-info[data-astro-cid-4dqtj3le]{display:flex;align-items:center;gap:.75rem}.author-avatar-sm[data-astro-cid-4dqtj3le]{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#000;flex-shrink:0}.author-name-sm[data-astro-cid-4dqtj3le]{font-size:.9rem;font-weight:600}.author-title-sm[data-astro-cid-4dqtj3le]{font-size:.78rem;color:var(--muted)}.blog-meta-right[data-astro-cid-4dqtj3le]{font-size:.85rem;color:var(--muted)}.blog-divider[data-astro-cid-4dqtj3le]{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:2.5rem 0}.post-footer[data-astro-cid-4dqtj3le]{max-width:720px}.post-cta[data-astro-cid-4dqtj3le]{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:2rem}.post-cta[data-astro-cid-4dqtj3le] h3[data-astro-cid-4dqtj3le]{margin-bottom:.5rem}.post-cta[data-astro-cid-4dqtj3le] p[data-astro-cid-4dqtj3le]{color:var(--muted);margin-bottom:1.5rem}.wa-float[data-astro-cid-4dqtj3le]{position:fixed;bottom:1.75rem;right:1.75rem;z-index:999;width:54px;height:54px;background:linear-gradient(135deg,#25d366,#128c7e);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px #25d36673;text-decoration:none;transition:transform .25s}.wa-float[data-astro-cid-4dqtj3le] svg[data-astro-cid-4dqtj3le]{width:26px;height:26px}.wa-float[data-astro-cid-4dqtj3le]:hover{transform:scale(1.1)}
+</style></head> <body>   <nav class="blog-nav" data-astro-cid-4dqtj3le> <div class="container blog-nav-inner" data-astro-cid-4dqtj3le> <a href="/" class="nav-logo" data-astro-cid-4dqtj3le>Edgar<span data-astro-cid-4dqtj3le>.</span>dev</a> <a href="/blog" class="back-link" data-astro-cid-4dqtj3le> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-astro-cid-4dqtj3le><path d="M19 12H5M12 5l-7 7 7 7" data-astro-cid-4dqtj3le></path></svg>
+Todos los artículos
+</a> </div> </nav> <main class="blog-main" data-astro-cid-4dqtj3le> <div class="container" data-astro-cid-4dqtj3le> <article data-astro-cid-4dqtj3le> <!-- Header --> <header class="blog-header" data-astro-cid-4dqtj3le> <div class="blog-tags-top" data-astro-cid-4dqtj3le> <span class="tag" data-astro-cid-4dqtj3le>AWS Glue</span><span class="tag" data-astro-cid-4dqtj3le>ETL</span><span class="tag" data-astro-cid-4dqtj3le>PySpark</span><span class="tag" data-astro-cid-4dqtj3le>Redshift</span><span class="tag" data-astro-cid-4dqtj3le>Data Engineering</span> </div> <h1 class="blog-title" data-astro-cid-4dqtj3le>De 3 días a 15 minutos: cómo reconstruí el ETL de un e-commerce con AWS Glue</h1> <p class="blog-subtitle" data-astro-cid-4dqtj3le>Caso real de cómo reemplazé un proceso manual de reportes con un pipeline automático en AWS Glue + PySpark + Redshift. Incluye arquitectura, código y lecciones aprendidas.</p> <div class="blog-meta" data-astro-cid-4dqtj3le> <div class="author-info" data-astro-cid-4dqtj3le> <div class="author-avatar-sm" data-astro-cid-4dqtj3le>EP</div> <div data-astro-cid-4dqtj3le> <div class="author-name-sm" data-astro-cid-4dqtj3le>Edgar Pérez</div> <div class="author-title-sm" data-astro-cid-4dqtj3le>Data Engineer & Cloud Consultant</div> </div> </div> <div class="blog-meta-right" data-astro-cid-4dqtj3le> <span data-astro-cid-4dqtj3le>14 de enero de 2025</span> <span data-astro-cid-4dqtj3le>· 8 min de lectura</span> </div> </div> </header> <div class="blog-divider" data-astro-cid-4dqtj3le></div> <!-- Content --> <div class="blog-prose" data-astro-cid-4dqtj3le>  <p>Cuando llegué a este proyecto, el equipo de operaciones pasaba cada lunes descargando CSVs de cuatro plataformas distintas, copiando datos en Excel y enviando el reporte a dirección el martes o miércoles. <strong>Tres días de trabajo manual. Cada semana.</strong></p>
+<p>En este artículo te cuento cómo lo resolví con AWS Glue, PySpark y Redshift.</p>
+<h2 id="el-problema-en-detalle">El problema en detalle</h2>
+<p>La empresa tenía datos en:</p>
+<ul>
+<li><strong>Sistema de ventas</strong> (PostgreSQL on-premise)</li>
+<li><strong>Inventario</strong> (API REST de su ERP)</li>
+<li><strong>Logística</strong> (archivos CSV que enviaba el proveedor por SFTP)</li>
+<li><strong>Pagos</strong> (webhooks de Stripe guardados en S3)</li>
+</ul>
+<p>Cada fuente tenía sus propios formatos, encodings y convenciones de nombres. El proceso manual introducía errores constantemente.</p>
+<h2 id="la-arquitectura-que-diseñé">La arquitectura que diseñé</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[PostgreSQL] ──┐</span></span>
+<span class="line"><span>[ERP API]   ──┤──► [S3 Raw Zone] ──► [AWS Glue ETL] ──► [Redshift] ──► [Power BI]</span></span>
+<span class="line"><span>[SFTP CSV]  ──┤</span></span>
+<span class="line"><span>[S3 Stripe] ──┘</span></span>
+<span class="line"><span>       ↑</span></span>
+<span class="line"><span>   [Step Functions orquesta todo]</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="por-qué-elegí-aws-glue-sobre-alternativas">Por qué elegí AWS Glue sobre alternativas</h3>
+<p>Podría haber usado Airflow + custom scripts, pero para este cliente tenía tres ventajas claras:</p>
+<ol>
+<li><strong>Serverless</strong>: no hay servidores que administrar ni escalar</li>
+<li><strong>Catálogo de datos integrado</strong>: AWS Glue Data Catalog se convierte en el inventario de todo el data lake</li>
+<li><strong>Conector nativo a Redshift</strong>: sin escribir código de conexión</li>
+</ol>
+<h2 id="el-código-que-cambió-todo">El código que cambió todo</h2>
+<p>El Glue Job central hace la transformación más compleja: unificar los cuatro esquemas en uno solo.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> sys</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> awsglue.transforms </span><span style="color:#F97583">import</span><span style="color:#F97583"> *</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> awsglue.utils </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> getResolvedOptions</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pyspark.context </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> SparkContext</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> awsglue.context </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> GlueContext</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> awsglue.job </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Job</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pyspark.sql </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> functions </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> F</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pyspark.sql.types </span><span style="color:#F97583">import</span><span style="color:#F97583"> *</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">args </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> getResolvedOptions(sys.argv, [</span><span style="color:#9ECBFF">'JOB_NAME'</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">sc   </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> SparkContext()</span></span>
+<span class="line"><span style="color:#E1E4E8">glueContext </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> GlueContext(sc)</span></span>
+<span class="line"><span style="color:#E1E4E8">spark </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> glueContext.spark_session</span></span>
+<span class="line"><span style="color:#E1E4E8">job   </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Job(glueContext)</span></span>
+<span class="line"><span style="color:#E1E4E8">job.init(args[</span><span style="color:#9ECBFF">'JOB_NAME'</span><span style="color:#E1E4E8">], args)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># --- Leer fuentes ---</span></span>
+<span class="line"><span style="color:#E1E4E8">ventas </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> glueContext.create_dynamic_frame.from_catalog(</span></span>
+<span class="line"><span style="color:#FFAB70">    database</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"ecommerce_raw"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    table_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"ventas_postgres"</span></span>
+<span class="line"><span style="color:#E1E4E8">).toDF()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">pagos </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> spark.read.parquet(</span><span style="color:#9ECBFF">"s3://mi-bucket/raw/stripe/"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># --- Normalizar fechas (cada fuente tenía formato diferente) ---</span></span>
+<span class="line"><span style="color:#E1E4E8">ventas </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ventas.withColumn(</span></span>
+<span class="line"><span style="color:#9ECBFF">    "fecha"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    F.to_timestamp(F.col(</span><span style="color:#9ECBFF">"created_at"</span><span style="color:#E1E4E8">), </span><span style="color:#9ECBFF">"yyyy-MM-dd HH:mm:ss"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">pagos </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> pagos.withColumn(</span></span>
+<span class="line"><span style="color:#9ECBFF">    "fecha"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    F.to_timestamp(F.col(</span><span style="color:#9ECBFF">"created"</span><span style="color:#E1E4E8">), </span><span style="color:#9ECBFF">"yyyy-MM-dd'T'HH:mm:ss'Z'"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># --- Join y enriquecimiento ---</span></span>
+<span class="line"><span style="color:#E1E4E8">resultado </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ventas.join(</span></span>
+<span class="line"><span style="color:#E1E4E8">    pagos,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ventas.order_id </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> pagos.metadata_order_id,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "left"</span></span>
+<span class="line"><span style="color:#E1E4E8">).select(</span></span>
+<span class="line"><span style="color:#E1E4E8">    ventas.order_id,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ventas.fecha,</span></span>
+<span class="line"><span style="color:#E1E4E8">    ventas.total.alias(</span><span style="color:#9ECBFF">"monto_venta"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    pagos.amount_received.alias(</span><span style="color:#9ECBFF">"monto_cobrado"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    F.when(</span></span>
+<span class="line"><span style="color:#E1E4E8">        ventas.total </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> (pagos.amount_received </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">), </span><span style="color:#9ECBFF">"OK"</span></span>
+<span class="line"><span style="color:#E1E4E8">    ).otherwise(</span><span style="color:#9ECBFF">"DISCREPANCIA"</span><span style="color:#E1E4E8">).alias(</span><span style="color:#9ECBFF">"estado_pago"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># --- Escribir en Redshift ---</span></span>
+<span class="line"><span style="color:#E1E4E8">glueContext.write_dynamic_frame.from_jdbc_conf(</span></span>
+<span class="line"><span style="color:#FFAB70">    frame</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">DynamicFrame.fromDF(resultado, glueContext, </span><span style="color:#9ECBFF">"resultado"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#FFAB70">    catalog_connection</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"redshift-prod"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    connection_options</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"dbtable"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ventas.hechos_ventas"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"database"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"analytics"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#FFAB70">    redshift_tmp_dir</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"s3://mi-bucket/tmp/glue/"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">job.commit()</span></span>
+<span class="line"></span></code></pre>
+<h2 id="la-orquestación-con-step-functions">La orquestación con Step Functions</h2>
+<p>El pipeline completa en este orden:</p>
+<ol>
+<li><strong>Extracción</strong>: Lambda extrae datos del ERP API y los deposita en S3</li>
+<li><strong>Transformación</strong>: Glue Job procesa todos los datos</li>
+<li><strong>Carga</strong>: Escribe en Redshift y actualiza el Catálogo</li>
+<li><strong>Notificación</strong>: SNS envía email confirmando éxito (o alerta si falla)</li>
+</ol>
+<p>El trigger es un EventBridge rule que corre a las <strong>3:00 AM de lunes a viernes</strong>.</p>
+<h2 id="resultados-después-de-3-meses">Resultados después de 3 meses</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Métrica</th><th>Antes</th><th>Después</th></tr></thead><tbody><tr><td>Tiempo de reporte</td><td>3 días</td><td>15 minutos</td></tr><tr><td>Errores manuales</td><td>~5 por semana</td><td>0</td></tr><tr><td>Costo infra mensual</td><td>$0 (trabajo humano)</td><td>$47 USD</td></tr><tr><td>Horas humanas/semana</td><td>12 horas</td><td>0</td></tr></tbody></table>
+<p>El costo de <strong>$47 USD mensuales</strong> vs. 12 horas/semana de un analista es probablemente el mejor ROI que he visto en un proyecto.</p>
+<h2 id="lecciones-aprendidas">Lecciones aprendidas</h2>
+<p><strong>1. Siempre valida en Bronze antes de transformar.</strong> Guardar los datos crudos en S3 me salvó dos veces cuando hubo cambios de formato inesperados en las fuentes.</p>
+<p><strong>2. El schema evolution es inevitable.</strong> El ERP cambió un campo de <code>precio</code> a <code>price</code> en una actualización. Tener el Glue Data Catalog configurado correctamente detectó el cambio antes de que rompiera producción.</p>
+<p><strong>3. Step Functions > Airflow para pipelines simples.</strong> Si tienes menos de 20 pasos y todo está en AWS, Step Functions es más barato y no requiere mantener un servidor de Airflow.</p>
+<hr>
+<p>¿Tienes un proceso similar en tu empresa? <a href="https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20tu%20art%C3%ADculo%20de%20AWS%20Glue%20y%20me%20interesa%20hablar">Hablemos.</a></p>  </div> <!-- Footer del post --> <div class="blog-divider" data-astro-cid-4dqtj3le></div> <div class="post-footer" data-astro-cid-4dqtj3le> <div class="post-cta" data-astro-cid-4dqtj3le> <h3 data-astro-cid-4dqtj3le>¿Te resultó útil este artículo?</h3> <p data-astro-cid-4dqtj3le>Si tienes un proyecto de datos o quieres automatizar tus procesos, hablemos.</p> <div class="btn-group" data-astro-cid-4dqtj3le> <a href="https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20tu%20art%C3%ADculo%20y%20me%20gustar%C3%ADa%20hablar" target="_blank" rel="noopener" class="btn btn-wa" data-astro-cid-4dqtj3le> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" data-astro-cid-4dqtj3le><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" data-astro-cid-4dqtj3le></path><path d="M11.997 1.003C6.006 1.003 1.097 5.91 1.097 11.9c0 1.91.498 3.698 1.368 5.246L1 22.997l5.98-1.442A10.853 10.853 0 0011.997 22.8c5.99 0 10.903-4.909 10.903-10.9 0-5.99-4.913-10.897-10.903-10.897zm0 19.797a8.953 8.953 0 01-4.556-1.243l-.327-.194-3.555.858.894-3.455-.213-.35A8.91 8.91 0 013.1 11.9c0-4.909 3.996-8.9 8.897-8.9 4.9 0 8.897 3.991 8.897 8.9 0 4.91-3.997 8.9-8.897 8.9z" data-astro-cid-4dqtj3le></path></svg>
+Hablar por WhatsApp
+</a> <a href="/#cta" class="btn btn-outline" data-astro-cid-4dqtj3le>Ver servicios</a> </div> </div> </div> </article> </div> </main>  <a class="wa-float" href="https://wa.me/529981234567" target="_blank" rel="noopener" aria-label="WhatsApp" data-astro-cid-4dqtj3le> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" data-astro-cid-4dqtj3le><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" data-astro-cid-4dqtj3le></path><path d="M11.997 1.003C6.006 1.003 1.097 5.91 1.097 11.9c0 1.91.498 3.698 1.368 5.246L1 22.997l5.98-1.442A10.853 10.853 0 0011.997 22.8c5.99 0 10.903-4.909 10.903-10.9 0-5.99-4.913-10.897-10.903-10.897zm0 19.797a8.953 8.953 0 01-4.556-1.243l-.327-.194-3.555.858.894-3.455-.213-.35A8.91 8.91 0 013.1 11.9c0-4.909 3.996-8.9 8.897-8.9 4.9 0 8.897 3.991 8.897 8.9 0 4.91-3.997 8.9-8.897 8.9z" data-astro-cid-4dqtj3le></path></svg> </a>  </body></html> 

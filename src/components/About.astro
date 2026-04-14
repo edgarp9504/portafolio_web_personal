@@ -1,0 +1,97 @@
+---
+---
+<section id="about" class="bg2">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text fade-up">
+        <div class="section-label">Sobre mí</div>
+        <h2>No solo escribo código.<br><span class="accent">Resuelvo problemas de negocio.</span></h2>
+
+        <p>Soy Edgar Pérez, <strong>Data Engineer y Cloud Consultant</strong> basado en Cancún.
+        Llevo más de 5 años construyendo la infraestructura de datos que permite a empresas
+        tomar decisiones más rápidas y con mayor certeza.</p>
+
+        <p>Comencé en el mundo del desarrollo backend con <strong>Python y FastAPI</strong>,
+        y migré hacia la ingeniería de datos cuando vi que el mayor problema de mis clientes
+        no era la falta de datos — era que sus datos <strong>no estaban conectados,
+        limpios ni listos para usarse</strong>.</p>
+
+        <p>Hoy combino experiencia técnica profunda en <strong>Azure y AWS</strong> con
+        conocimiento de IA aplicada y una visión de negocio clara: cada pipeline y cada
+        sistema que construyo debe generar ROI visible y medible.</p>
+
+        <div class="about-pills">
+          <span class="pill">Cloud Architecture</span>
+          <span class="pill">Data Engineering</span>
+          <span class="pill">IA Empresarial</span>
+          <span class="pill">Marketing Data</span>
+          <span class="pill">BI & Dashboards</span>
+        </div>
+      </div>
+
+      <div class="about-cards fade-up" style="transition-delay:.15s">
+        <div class="about-card">
+          <span class="about-card-icon">🎯</span>
+          <div>
+            <h4>Orientado a resultados</h4>
+            <p>Mido el éxito en ahorro de horas, reducción de costos y decisiones más rápidas — no en líneas de código.</p>
+          </div>
+        </div>
+        <div class="about-card">
+          <span class="about-card-icon">☁️</span>
+          <div>
+            <h4>Multi-cloud sin dogmas</h4>
+            <p>Azure, AWS o GCP. Te recomiendo la herramienta correcta para tu caso, no la que más conozco.</p>
+          </div>
+        </div>
+        <div class="about-card">
+          <span class="about-card-icon">🧠</span>
+          <div>
+            <h4>Data Engineering + IA</h4>
+            <p>Construyo la base de datos que los modelos de IA necesitan para funcionar bien, y luego los integro.</p>
+          </div>
+        </div>
+        <div class="about-card">
+          <span class="about-card-icon">🤝</span>
+          <div>
+            <h4>Comunicación clara</h4>
+            <p>Traduzco el lenguaje técnico al lenguaje de negocio. Siempre sabes qué se está construyendo y por qué.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bg2 { background: var(--bg2); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .about-text p { color: var(--muted); margin-bottom: 1rem; }
+  .about-text p strong { color: var(--text); }
+  .about-pills { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.5rem; }
+
+  .about-cards { display: flex; flex-direction: column; gap: 1rem; }
+  .about-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    transition: border-color .25s, transform .25s;
+  }
+  .about-card:hover { border-color: var(--accent); transform: translateX(4px); }
+  .about-card-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: .1rem; }
+  .about-card h4   { font-size: .95rem; margin-bottom: .3rem; }
+  .about-card p    { font-size: .85rem; color: var(--muted); margin: 0; }
+
+  @media (max-width: 768px) {
+    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+</style>
