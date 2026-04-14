@@ -43,7 +43,7 @@ const formatted = pubDate.toLocaleDateString('es-MX', {
           <p class="blog-subtitle">{description}</p>
           <div class="blog-meta">
             <div class="author-info">
-              <div class="author-avatar-sm">EP</div>
+              <img src="/edgar-perez.jpg" alt="Edgar Pérez" class="author-avatar-sm" />
               <div>
                 <div class="author-name-sm">Edgar Pérez</div>
                 <div class="author-title-sm">Data Engineer & Cloud Consultant</div>
@@ -138,11 +138,12 @@ const formatted = pubDate.toLocaleDateString('es-MX', {
   }
   .author-info { display: flex; align-items: center; gap: .75rem; }
   .author-avatar-sm {
-    width: 40px; height: 40px;
+    width: 42px; height: 42px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: .85rem; color: #000; flex-shrink: 0;
+    object-fit: cover;
+    object-position: center top;
+    flex-shrink: 0;
+    border: 2px solid var(--accent);
   }
   .author-name-sm  { font-size: .9rem; font-weight: 600; }
   .author-title-sm { font-size: .78rem; color: var(--muted); }
