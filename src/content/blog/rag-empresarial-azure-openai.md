@@ -257,4 +257,4 @@ El **costo de $89 USD/mes** para eliminar el equivalente a 3-4 horas/día de bú
 
 ---
 
-¿Tienes documentación interna que tu equipo no puede aprovechar? [Hablemos de implementar RAG en tu empresa.](https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20RAG%20y%20me%20interesa%20implementarlo%20en%20mi%20empresa)
+¿Tienes documentación interna que tu equipo no puede aprovechar? [Hablemos de implementar RAG en tu empresa.](https://wa.me/529983253195?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20RAG%20y%20me%20interesa%20implementarlo%20en%20mi%20empresa)

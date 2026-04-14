@@ -304,4 +304,4 @@ La dueña ahora sabe exactamente qué servicios son los más rentables, qué dí
 
 ---
 
-¿Tienes un negocio de servicios que necesita presencia digital y herramientas de gestión? [Hablemos.](https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20el%20proyecto%20Gelesha%20Spa%20y%20me%20interesa%20algo%20similar%20para%20mi%20negocio)
+¿Tienes un negocio de servicios que necesita presencia digital y herramientas de gestión? [Hablemos.](https://wa.me/529983253195?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20el%20proyecto%20Gelesha%20Spa%20y%20me%20interesa%20algo%20similar%20para%20mi%20negocio)

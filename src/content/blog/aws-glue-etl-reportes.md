@@ -138,4 +138,4 @@ El costo de **$47 USD mensuales** vs. 12 horas/semana de un analista es probable
 
 ---
 
-¿Tienes un proceso similar en tu empresa? [Hablemos.](https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20tu%20art%C3%ADculo%20de%20AWS%20Glue%20y%20me%20interesa%20hablar)
+¿Tienes un proceso similar en tu empresa? [Hablemos.](https://wa.me/529983253195?text=Hola%20Edgar%2C%20le%C3%AD%20tu%20art%C3%ADculo%20de%20AWS%20Glue%20y%20me%20interesa%20hablar)

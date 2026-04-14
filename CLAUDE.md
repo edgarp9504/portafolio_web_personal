@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project
 
 Portfolio + Blog site for Edgar Pérez — Data Engineer, Cloud Consultant & IA Empresarial.
-Built with **Astro 4 (static output)** + Markdown content collections. Deployed to GitHub Pages with a custom domain.
+Built with **Astro 4 (static output)** + Markdown content collections. Deployed on **Vercel** (auto-deploy on push to `main`).
 
 ## Commands
 
@@ -71,14 +71,11 @@ featured: false
 
 ### Things to update before going live
 
-1. **WhatsApp number** — replace `529981234567` everywhere
-2. **Email** — replace `edgar@ejemplo.com`
-3. **Domain** — set `site` in `astro.config.mjs` + `public/CNAME`
-4. **LinkedIn/GitHub** — update links in `Footer.astro`
-5. **robots.txt** — update sitemap URL with real domain
-6. **Schema.org** — update `sameAs` URLs in `BaseLayout.astro`
+1. **Domain** — set `site` in `astro.config.mjs` and `public/robots.txt` with the real domain
+2. **LinkedIn/GitHub** — update links in `Footer.astro`
+3. **Schema.org** — update `sameAs` URLs in `BaseLayout.astro`
 
-### GitHub Pages deployment
+### Deployment (Vercel)
 
-Push to `main` → GitHub Actions (`.github/workflows/deploy.yml`) builds and deploys automatically.
-Enable Pages in repo Settings → Pages → Source: "GitHub Actions".
+Push to `main` → Vercel builds and deploys automatically.
+Build config is in `vercel.json`: uses `chmod +x ./node_modules/.bin/astro` before build to fix Linux permission issue.

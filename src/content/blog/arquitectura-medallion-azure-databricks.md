@@ -239,4 +239,4 @@ SELECT * FROM delta.`/mnt/silver/orders` TIMESTAMP AS OF '2025-01-01'
 
 ---
 
-¿Tienes datos en Azure que necesitan gobernanza y estructura? [Cuéntame tu caso.](https://wa.me/529981234567?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20Medallion%20Architecture%20y%20me%20interesa%20implementarlo)
+¿Tienes datos en Azure que necesitan gobernanza y estructura? [Cuéntame tu caso.](https://wa.me/529983253195?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20Medallion%20Architecture%20y%20me%20interesa%20implementarlo)

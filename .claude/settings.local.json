@@ -5,7 +5,8 @@
       "Bash(npm install:*)",
       "Bash(npm run:*)",
       "Bash(npm list:*)",
-      "WebFetch(domain:gelesha-proyect.vercel.app)"
+      "WebFetch(domain:gelesha-proyect.vercel.app)",
+      "Bash(xargs sed:*)"
     ]
   }
 }
