@@ -1,5 +1,5 @@
 ---
-title: "Gelesha Spa: cómo construí una web pública + panel admin completo para un negocio de estética"
+title: "Spa: cómo construí una web pública + panel admin completo para un negocio de estética"
 description: "Caso de estudio: desarrollo de una plataforma completa para un spa en México. Web pública con 50+ servicios, sistema de agenda, módulo de cobros, dashboard financiero y reportes en Excel — desde cero hasta producción en Vercel."
 pubDate: 2025-03-28
 tags: ["Desarrollo Web", "SPA", "Panel Admin", "Dashboard", "JavaScript"]
@@ -9,7 +9,7 @@ featured: true
 
 Cuando un negocio de servicios no tiene presencia digital, pierde clientes todos los días sin saberlo. Cuando tampoco tiene sistema de gestión, pierde dinero que no puede rastrear.
 
-**Gelesha Spa** tenía los dos problemas.
+**El Spa** tenía los dos problemas.
 
 Este es el caso de estudio de cómo resolví ambos con una sola plataforma: una web pública orientada a conversión + un panel administrativo completo. [Ver demo en vivo →](https://gelesha-proyect.vercel.app/)
 
@@ -101,7 +101,7 @@ Cada tarjeta de servicio tiene un botón de WhatsApp con mensaje pre-llenado:
 ```javascript
 function generateWhatsAppLink(serviceName, price) {
   const message = encodeURIComponent(
-    `Hola Gelesha 🌿, me interesa agendar *${serviceName}* ($${price}). ¿Tienen disponibilidad?`
+    `Hola 🌿, me interesa agendar *${serviceName}* ($${price}). ¿Tienen disponibilidad?`
   );
   return `https://wa.me/52XXXXXXXXXX?text=${message}`;
 }
@@ -127,7 +127,7 @@ function authenticate(username, password) {
   };
 
   if (username === credentials.user && password === credentials.pass) {
-    sessionStorage.setItem('gelesha_auth', btoa(username + ':' + Date.now()));
+    sessionStorage.setItem('spa_auth', btoa(username + ':' + Date.now()));
     redirectToDashboard();
   } else {
     showShakeAnimation(); // feedback visual de error
@@ -137,7 +137,7 @@ function authenticate(username, password) {
 
 // Guard en cada vista del admin
 function requireAuth() {
-  const session = sessionStorage.getItem('gelesha_auth');
+  const session = sessionStorage.getItem('spa_auth');
   if (!session) window.location.href = '/admin';
 }
 ```
@@ -257,7 +257,7 @@ function exportToExcel(period) {
   XLSX.utils.book_append_sheet(wb, wsDetail,  'Detalle de ventas');
   XLSX.utils.book_append_sheet(wb, wsSummary, 'Resumen por categoría');
 
-  XLSX.writeFile(wb, `Gelesha_Reporte_${period}_${new Date().toLocaleDateString()}.xlsx`);
+  XLSX.writeFile(wb, `Spa_Reporte_${period}_${new Date().toLocaleDateString()}.xlsx`);
 }
 ```
 
@@ -304,4 +304,4 @@ La dueña ahora sabe exactamente qué servicios son los más rentables, qué dí
 
 ---
 
-¿Tienes un negocio de servicios que necesita presencia digital y herramientas de gestión? [Hablemos.](https://wa.me/529983253195?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20el%20proyecto%20Gelesha%20Spa%20y%20me%20interesa%20algo%20similar%20para%20mi%20negocio)
+¿Tienes un negocio de servicios que necesita presencia digital y herramientas de gestión? [Hablemos.](https://wa.me/529983253195?text=Hola%20Edgar%2C%20le%C3%AD%20sobre%20el%20proyecto%20Spa%20y%20me%20interesa%20algo%20similar%20para%20mi%20negocio)
