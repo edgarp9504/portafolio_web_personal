@@ -7,11 +7,11 @@ export const stackGroups: StackGroup[] = [
   },
   {
     label: 'Cloud · Azure',
-    items: ['Azure Data Factory', 'Azure Databricks', 'Azure Synapse', 'Azure Data Lake Gen2', 'Azure Functions', 'Azure OpenAI'],
+    items: ['Azure Data Factory', 'Azure Databricks', 'Azure Synapse', 'Azure Data Lake Gen2', 'Azure Functions'],
   },
   {
     label: 'Cloud · AWS',
-    items: ['AWS Glue', 'Amazon S3', 'Amazon Redshift', 'AWS Lambda', 'Step Functions', 'RDS'],
+    items: ['AWS Glue', 'Amazon S3', 'Amazon Redshift', 'AWS Lambda', 'RDS'],
   },
   {
     label: 'Plataformas de Datos',
@@ -19,7 +19,7 @@ export const stackGroups: StackGroup[] = [
   },
   {
     label: 'IA & Machine Learning',
-    items: ['Azure OpenAI', 'OpenAI API', 'LangChain', 'LlamaIndex', 'Pinecone', 'Azure ML', 'MLflow', 'pgvector'],
+    items: ['OpenAI API', 'LangChain', 'MLflow', 'pgvector'],
   },
   {
     label: 'BI & Visualización',

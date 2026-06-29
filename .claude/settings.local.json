@@ -26,7 +26,8 @@
       "Bash(npm view *)",
       "Bash(git mv *)",
       "Bash(mv \"src/pages/og/[...route].png.ts\" \"src/pages/og/[...route].ts\")",
-      "Bash(git commit -q -m 'feat: OG dinámico por post, separación de CSS de blog y accesibilidad *)"
+      "Bash(git commit -q -m 'feat: OG dinámico por post, separación de CSS de blog y accesibilidad *)",
+      "Bash(git commit -q -m 'refactor: quitar Azure OpenAI, Step Functions, LlamaIndex, Pinecone y Azure ML del portafolio *)"
     ]
   }
 }

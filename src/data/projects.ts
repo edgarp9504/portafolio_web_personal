@@ -17,9 +17,9 @@ export const projects: Project[] = [
     icon: 'shopping-cart',
     title: 'Pipeline ETL con AWS Glue para E-commerce',
     problem: 'Datos de ventas, inventario y logística en 4 sistemas distintos. Reportes tardaban 3 días en generarse manualmente.',
-    solution: 'Pipeline ETL en AWS Glue con PySpark, carga en Redshift y orquestación con Step Functions.',
+    solution: 'Pipeline ETL en AWS Glue con PySpark y carga automatizada en Redshift.',
     impact: 'Reportes de 3 días → 15 minutos automáticos',
-    tags: ['AWS Glue', 'PySpark', 'S3', 'Redshift', 'Step Functions'],
+    tags: ['AWS Glue', 'PySpark', 'S3', 'Redshift'],
   },
   {
     label: 'Azure · Lakehouse',
@@ -53,8 +53,8 @@ export const projects: Project[] = [
     icon: 'brain-circuit',
     title: 'Sistema RAG para Base de Conocimiento Empresarial',
     problem: 'Empresa con 5 años de documentación interna (SOPs, contratos, reportes) que nadie podía encontrar rápido.',
-    solution: 'Sistema RAG con Azure OpenAI + Pinecone: los empleados hacen preguntas en lenguaje natural y obtienen respuestas con referencias.',
+    solution: 'Sistema RAG con LLMs y base de datos vectorial: los empleados hacen preguntas en lenguaje natural y obtienen respuestas con referencias.',
     impact: 'Tiempo de búsqueda: horas → menos de 30 segundos',
-    tags: ['Azure OpenAI', 'LangChain', 'Pinecone', 'FastAPI', 'Python'],
+    tags: ['OpenAI API', 'LangChain', 'pgvector', 'FastAPI', 'Python'],
   },
 ];
