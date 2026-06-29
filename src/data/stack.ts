@@ -15,11 +15,7 @@ export const stackGroups: StackGroup[] = [
   },
   {
     label: 'Plataformas de Datos',
-    items: ['Databricks', 'Snowflake', 'Delta Lake', 'PostgreSQL', 'dbt'],
-  },
-  {
-    label: 'IA & Machine Learning',
-    items: ['OpenAI API', 'LangChain', 'MLflow', 'pgvector'],
+    items: ['Databricks', 'Snowflake', 'Delta Lake', 'PostgreSQL'],
   },
   {
     label: 'BI & Visualización',
