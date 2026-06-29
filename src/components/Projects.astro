@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { projects } from '../data/projects';
 ---
 
@@ -20,7 +21,7 @@ import { projects } from '../data/projects';
               <div class="project-label">{p.label}</div>
               <h3>{p.title}</h3>
             </div>
-            <span class="project-icon">{p.icon}</span>
+            <Icon name={`lucide:${p.icon}`} class="project-icon" />
           </div>
 
           <div class="project-section">
@@ -32,7 +33,7 @@ import { projects } from '../data/projects';
             <p>{p.solution}</p>
           </div>
 
-          <div class="impact-badge">⚡ {p.impact}</div>
+          <div class="impact-badge"><Icon name="lucide:zap" class="impact-ico" /> {p.impact}</div>
 
           <div class="project-footer">
             <div class="tags-row">
@@ -65,9 +66,9 @@ import { projects } from '../data/projects';
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 2rem;
-    transition: all .3s;
+    transition: border-color .3s cubic-bezier(.4,0,.2,1), transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s cubic-bezier(.4,0,.2,1);
   }
-  .project-card:hover { border-color: rgba(0,212,255,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
+  .project-card:hover { border-color: rgba(45,212,191,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
 
   .project-header {
     display: flex;
@@ -84,7 +85,8 @@ import { projects } from '../data/projects';
     font-weight: 600;
     margin-bottom: .35rem;
   }
-  .project-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .project-icon { width: 1.8rem; height: 1.8rem; color: var(--accent); flex-shrink: 0; }
+  .impact-ico { width: .95rem; height: .95rem; flex-shrink: 0; }
   .project-header h3 { margin: 0; }
 
   .project-section { margin-bottom: .75rem; }
@@ -100,13 +102,13 @@ import { projects } from '../data/projects';
 
   /* Featured card */
   .project-card--featured {
-    border-color: rgba(0,212,255,.3);
+    border-color: rgba(45,212,191,.3);
     background: linear-gradient(135deg, #111827 0%, #0f1e30 100%);
     position: relative;
   }
   .project-card--featured:hover {
-    border-color: rgba(0,212,255,.6);
-    box-shadow: 0 8px 40px rgba(0,212,255,.12);
+    border-color: rgba(45,212,191,.6);
+    box-shadow: 0 8px 40px rgba(45,212,191,.12);
   }
   .featured-ribbon {
     display: inline-flex;
@@ -142,15 +144,15 @@ import { projects } from '../data/projects';
     font-weight: 600;
     color: var(--accent);
     text-decoration: none;
-    border: 1px solid rgba(0,212,255,.3);
+    border: 1px solid rgba(45,212,191,.3);
     border-radius: 8px;
     padding: .35rem .85rem;
-    transition: all .2s;
+    transition: background .2s cubic-bezier(.4,0,.2,1), border-color .2s cubic-bezier(.4,0,.2,1), transform .2s cubic-bezier(.4,0,.2,1);
     white-space: nowrap;
     flex-shrink: 0;
   }
   .demo-link:hover {
-    background: rgba(0,212,255,.08);
+    background: rgba(45,212,191,.08);
     border-color: var(--accent);
     transform: translateY(-1px);
   }

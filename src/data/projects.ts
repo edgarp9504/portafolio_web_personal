@@ -3,7 +3,7 @@ import type { Project } from './types';
 export const projects: Project[] = [
   {
     label: 'Full-Stack · SPA · Panel Admin',
-    icon: '🌿',
+    icon: 'layout-dashboard',
     title: 'Gelesha Spa — Web + Sistema de Gestión Completo',
     problem: 'Spa sin presencia digital y con gestión de citas, cobros y reportes 100% manual, lo que generaba pérdida de clientes y cero visibilidad financiera.',
     solution: 'Plataforma completa: web pública con catálogo de 50+ servicios filtrable + panel admin con dashboard de KPIs, agenda de citas, registro de cobros y reportes exportables a Excel. Todo con autenticación.',
@@ -14,7 +14,7 @@ export const projects: Project[] = [
   },
   {
     label: 'AWS · ETL',
-    icon: '🛒',
+    icon: 'shopping-cart',
     title: 'Pipeline ETL con AWS Glue para E-commerce',
     problem: 'Datos de ventas, inventario y logística en 4 sistemas distintos. Reportes tardaban 3 días en generarse manualmente.',
     solution: 'Pipeline ETL en AWS Glue con PySpark, carga en Redshift y orquestación con Step Functions.',
@@ -23,7 +23,7 @@ export const projects: Project[] = [
   },
   {
     label: 'Azure · Lakehouse',
-    icon: '🏔️',
+    icon: 'layers',
     title: 'Arquitectura Medallion en Azure Databricks',
     problem: 'Múltiples fuentes de datos sin gobernanza. Los analistas perdían horas buscando la "versión correcta" de los datos.',
     solution: 'Arquitectura Medallion completa (Bronze/Silver/Gold) sobre Azure Data Lake con Databricks y Delta Lake.',
@@ -32,7 +32,7 @@ export const projects: Project[] = [
   },
   {
     label: 'Marketing Data · APIs',
-    icon: '📣',
+    icon: 'megaphone',
     title: 'Centralización de Datos de Advertising',
     problem: 'Equipo de marketing generaba reportes descargando CSVs manualmente de Google Ads, Meta y TikTok.',
     solution: 'Sistema de extracción automática vía APIs, normalización de métricas y dashboard unificado en Power BI cada 6 horas.',
@@ -41,7 +41,7 @@ export const projects: Project[] = [
   },
   {
     label: 'Turismo · Automatización',
-    icon: '🌴',
+    icon: 'palmtree',
     title: 'Sistema de Datos para ToursGoMX',
     problem: 'Operadora turística con reservas, pagos y operaciones en plataformas desconectadas. Sin visibilidad de rentabilidad.',
     solution: 'Integración de CRM, sistema de reservas y pasarela de pagos en un data warehouse. Dashboard de KPIs por destino y temporada.',
@@ -50,7 +50,7 @@ export const projects: Project[] = [
   },
   {
     label: 'IA · RAG System',
-    icon: '🧠',
+    icon: 'brain-circuit',
     title: 'Sistema RAG para Base de Conocimiento Empresarial',
     problem: 'Empresa con 5 años de documentación interna (SOPs, contratos, reportes) que nadie podía encontrar rápido.',
     solution: 'Sistema RAG con Azure OpenAI + Pinecone: los empleados hacen preguntas en lenguaje natural y obtienen respuestas con referencias.',

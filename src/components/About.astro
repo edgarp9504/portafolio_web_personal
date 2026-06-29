@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 ---
 <section id="about" class="bg2">
   <div class="container">
@@ -50,28 +51,28 @@
         <!-- Cards -->
         <div class="about-cards">
         <div class="about-card">
-          <span class="about-card-icon">🎯</span>
+          <Icon name="lucide:target" class="about-card-icon" />
           <div>
             <h4>Orientado a resultados</h4>
             <p>Mido el éxito en ahorro de horas, reducción de costos y decisiones más rápidas — no en líneas de código.</p>
           </div>
         </div>
         <div class="about-card">
-          <span class="about-card-icon">☁️</span>
+          <Icon name="lucide:cloud" class="about-card-icon" />
           <div>
             <h4>Multi-cloud sin dogmas</h4>
             <p>Azure, AWS o GCP. Te recomiendo la herramienta correcta para tu caso, no la que más conozco.</p>
           </div>
         </div>
         <div class="about-card">
-          <span class="about-card-icon">🧠</span>
+          <Icon name="lucide:brain-circuit" class="about-card-icon" />
           <div>
             <h4>Data Engineering + IA</h4>
             <p>Construyo la base de datos que los modelos de IA necesitan para funcionar bien, y luego los integro.</p>
           </div>
         </div>
         <div class="about-card">
-          <span class="about-card-icon">🤝</span>
+          <Icon name="lucide:handshake" class="about-card-icon" />
           <div>
             <h4>Comunicación clara</h4>
             <p>Traduzco el lenguaje técnico al lenguaje de negocio. Siempre sabes qué se está construyendo y por qué.</p>
@@ -143,8 +144,8 @@
     display: inline-flex;
     align-items: center;
     gap: .45rem;
-    background: rgba(0,212,255,.08);
-    border: 1px solid rgba(0,212,255,.2);
+    background: rgba(45,212,191,.08);
+    border: 1px solid rgba(45,212,191,.2);
     border-radius: 100px;
     padding: .3rem .9rem;
     font-size: .78rem;
@@ -168,10 +169,10 @@
     display: flex;
     gap: 1rem;
     align-items: flex-start;
-    transition: border-color .25s, transform .25s;
+    transition: border-color .25s cubic-bezier(.4,0,.2,1), transform .25s cubic-bezier(.4,0,.2,1);
   }
   .about-card:hover { border-color: var(--accent); transform: translateX(4px); }
-  .about-card-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: .1rem; }
+  .about-card-icon { width: 1.5rem; height: 1.5rem; color: var(--accent); flex-shrink: 0; margin-top: .15rem; }
   .about-card h4   { font-size: .95rem; margin-bottom: .3rem; }
   .about-card p    { font-size: .85rem; color: var(--muted); margin: 0; }
 

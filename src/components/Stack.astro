@@ -33,6 +33,9 @@ import { stackGroups } from '../data/stack';
   }
   .stack-items { display: flex; flex-wrap: wrap; gap: .75rem; }
   .stack-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -40,7 +43,16 @@ import { stackGroups } from '../data/stack';
     font-size: .88rem;
     font-weight: 500;
     color: var(--text);
-    transition: all .25s;
+    transition: border-color .25s cubic-bezier(.4,0,.2,1), color .25s cubic-bezier(.4,0,.2,1), transform .25s cubic-bezier(.4,0,.2,1);
+  }
+  .stack-item::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: .6;
+    flex-shrink: 0;
   }
   .stack-item:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 </style>

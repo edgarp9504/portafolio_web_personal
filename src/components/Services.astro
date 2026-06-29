@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { services } from '../data/services';
 ---
 
@@ -11,10 +12,10 @@ import { services } from '../data/services';
     <div class="grid-3 stagger">
       {services.map(s => (
         <div class="service-card fade-up">
-          <span class="service-icon">{s.icon}</span>
+          <Icon name={`lucide:${s.icon}`} class="service-icon" />
           <h3>{s.title}</h3>
-          <span class="service-problem">❌ {s.problem}</span>
-          <span class="service-solution">✅ {s.solution}</span>
+          <span class="service-problem"><Icon name="lucide:x" class="inline-ico" /> {s.problem}</span>
+          <span class="service-solution"><Icon name="lucide:check" class="inline-ico" /> {s.solution}</span>
           <p>{s.desc}</p>
           <div class="tags-row">
             {s.tags.map(t => <span class="tag">{t}</span>)}
@@ -31,7 +32,7 @@ import { services } from '../data/services';
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 2rem;
-    transition: all .3s;
+    transition: border-color .3s cubic-bezier(.4,0,.2,1), transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s cubic-bezier(.4,0,.2,1);
     position: relative;
     overflow: hidden;
   }
@@ -42,24 +43,27 @@ import { services } from '../data/services';
     height: 2px;
     background: linear-gradient(90deg, var(--accent), var(--accent2));
     transform: scaleX(0);
-    transition: transform .3s;
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
   }
-  .service-card:hover { border-color: rgba(0,212,255,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
+  .service-card:hover { border-color: rgba(45,212,191,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
   .service-card:hover::after { transform: scaleX(1); }
 
-  .service-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+  .service-icon { width: 2rem; height: 2rem; color: var(--accent); margin-bottom: 1rem; display: block; }
   .service-card h3 { margin-bottom: .75rem; }
 
   .service-problem,
   .service-solution {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
     font-size: .8rem;
     border-radius: 6px;
     padding: .3rem .7rem;
     margin-bottom: .4rem;
   }
+  .inline-ico { width: .9rem; height: .9rem; flex-shrink: 0; }
   .service-problem { color: #ef4444; background: rgba(239,68,68,.08); }
-  .service-solution { color: var(--accent2); background: rgba(0,255,136,.08); }
+  .service-solution { color: var(--accent2); background: rgba(52,211,153,.08); }
 
   .service-card p { font-size: .88rem; color: var(--muted); margin-top: .5rem; }
   .tags-row { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }

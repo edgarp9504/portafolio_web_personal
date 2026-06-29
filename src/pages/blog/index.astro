@@ -101,15 +101,15 @@ const posts = (await getCollection('blog')).sort(
     transform: scaleX(0);
     transition: transform .3s;
   }
-  .post-card:hover { border-color: rgba(0,212,255,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
+  .post-card:hover { border-color: rgba(45,212,191,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
   .post-card:hover::after { transform: scaleX(1); }
 
   .post-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
   .post-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
 
   .featured-badge {
-    background: rgba(0,212,255,.1);
-    border: 1px solid rgba(0,212,255,.25);
+    background: rgba(45,212,191,.1);
+    border: 1px solid rgba(45,212,191,.25);
     color: var(--accent);
     font-size: .72rem;
     padding: .2rem .6rem;

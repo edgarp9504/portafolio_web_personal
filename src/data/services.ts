@@ -2,7 +2,7 @@ import type { Service } from './types';
 
 export const services: Service[] = [
   {
-    icon: '⚙️',
+    icon: 'database',
     title: 'Data Engineering',
     problem: 'Datos dispersos, sin confianza ni gobernanza',
     solution: 'Pipelines ETL/ELT robustos y arquitectura Medallion',
@@ -10,7 +10,7 @@ export const services: Service[] = [
     tags: ['Azure Data Factory', 'AWS Glue', 'Databricks', 'PySpark', 'Delta Lake'],
   },
   {
-    icon: '📣',
+    icon: 'megaphone',
     title: 'Automatización de Marketing Data',
     problem: 'Reportes manuales que consumen días de trabajo',
     solution: 'Datos de ads actualizados automáticamente cada hora',
@@ -18,7 +18,7 @@ export const services: Service[] = [
     tags: ['Google Ads API', 'Meta API', 'GA4', 'TikTok API', 'Python'],
   },
   {
-    icon: '📈',
+    icon: 'bar-chart-3',
     title: 'Dashboards & BI',
     problem: 'Excel interminable y sin visibilidad en tiempo real',
     solution: 'Dashboards conectados que cualquier área puede leer',
@@ -26,7 +26,7 @@ export const services: Service[] = [
     tags: ['Power BI', 'Tableau', 'DAX', 'Semántica de datos'],
   },
   {
-    icon: '🔌',
+    icon: 'plug',
     title: 'Integraciones API',
     problem: 'Sistemas que no se hablan entre sí',
     solution: 'Flujos automatizados entre todas tus plataformas',
@@ -34,7 +34,7 @@ export const services: Service[] = [
     tags: ['FastAPI', 'AWS Lambda', 'REST APIs', 'Webhooks', 'Azure Functions'],
   },
   {
-    icon: '🏗️',
+    icon: 'building-2',
     title: 'Consultoría de Arquitectura Cloud',
     problem: 'Costos de nube elevados y deuda técnica acumulada',
     solution: 'Arquitectura optimizada, bien documentada y escalable',

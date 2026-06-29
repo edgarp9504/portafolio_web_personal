@@ -55,8 +55,8 @@ import { waLink } from '../config/site';
     content: '';
     position: absolute; inset: 0;
     background-image:
-      linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+      linear-gradient(rgba(45,212,191,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45,212,191,.04) 1px, transparent 1px);
     background-size: 50px 50px;
     pointer-events: none;
   }
@@ -66,18 +66,42 @@ import { waLink } from '../config/site';
     filter: blur(80px);
     opacity: .15;
     pointer-events: none;
+    will-change: transform;
   }
-  .orb1 { width: 500px; height: 500px; background: var(--accent);  top: -100px; right: -100px; }
-  .orb2 { width: 350px; height: 350px; background: var(--accent2); bottom: 0; left: -80px; }
+  .orb1 { width: 500px; height: 500px; background: var(--accent);  top: -100px; right: -100px; animation: float-orb 14s ease-in-out infinite; }
+  .orb2 { width: 350px; height: 350px; background: var(--accent2); bottom: 0; left: -80px; animation: float-orb 18s ease-in-out infinite reverse; }
+  @keyframes float-orb {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(20px, -24px); }
+  }
 
   .hero-content { position: relative; z-index: 1; }
+
+  /* Entrada escalonada del hero */
+  .hero-badge,
+  .hero-content h1,
+  .hero-sub,
+  .btn-group,
+  .hero-stats {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: hero-in .7s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  .hero-badge        { animation-delay: .05s; }
+  .hero-content h1   { animation-delay: .15s; }
+  .hero-sub          { animation-delay: .28s; }
+  .btn-group         { animation-delay: .40s; }
+  .hero-stats        { animation-delay: .52s; }
+  @keyframes hero-in {
+    to { opacity: 1; transform: none; }
+  }
 
   .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: .5rem;
-    background: rgba(0,212,255,.08);
-    border: 1px solid rgba(0,212,255,.2);
+    background: rgba(45,212,191,.08);
+    border: 1px solid rgba(45,212,191,.2);
     border-radius: 100px;
     padding: .35rem 1rem;
     font-size: .82rem;
@@ -113,6 +137,6 @@ import { waLink } from '../config/site';
     border-top: 1px solid var(--border);
   }
   .stat-item { display: flex; flex-direction: column; }
-  .stat-num  { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-num  { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--accent); }
   .stat-label{ font-size: .82rem; color: var(--muted); }
 </style>
