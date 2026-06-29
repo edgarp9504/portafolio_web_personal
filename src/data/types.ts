@@ -9,15 +9,3 @@ export interface StackGroup {
   label: string;
   items: string[];
 }
-
-export interface Project {
-  label: string;
-  icon: string;         // nombre de icono lucide
-  title: string;
-  problem: string;
-  solution: string;
-  impact: string;       // la impact-badge verde
-  tags: string[];
-  url?: string;
-  featured?: boolean;
-}

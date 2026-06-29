@@ -29,7 +29,8 @@
       "Bash(git commit -q -m 'feat: OG dinámico por post, separación de CSS de blog y accesibilidad *)",
       "Bash(git commit -q -m 'refactor: quitar Azure OpenAI, Step Functions, LlamaIndex, Pinecone y Azure ML del portafolio *)",
       "Bash(git commit -q -m 'refactor: quitar dbt y el grupo IA & Machine Learning del stack *)",
-      "Bash(git commit -q -m 'refactor: eliminar sección IA para Empresas *)"
+      "Bash(git commit -q -m 'refactor: eliminar sección IA para Empresas *)",
+      "Bash(git commit -q -m 'refactor: eliminar sección Proyectos *)"
     ]
   }
 }
