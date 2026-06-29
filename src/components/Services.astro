@@ -5,66 +5,128 @@ import { services } from '../data/services';
 
 <section id="services">
   <div class="container">
-    <div class="section-label fade-up">Servicios</div>
-    <h2 class="section-title fade-up">¿En qué puedo <span class="accent">ayudarte?</span></h2>
-    <p class="section-sub fade-up">Soluciones de datos end-to-end, desde la extracción hasta el dashboard.</p>
+    <div class="services-head">
+      <div>
+        <div class="section-label fade-up">Servicios</div>
+        <h2 class="section-title fade-up" style="margin:0">¿En qué puedo <span class="accent">ayudarte?</span></h2>
+      </div>
+      <div class="carousel-nav fade-up">
+        <button class="car-btn" id="svcPrev" type="button" aria-label="Ver servicios anteriores">
+          <Icon name="lucide:chevron-left" />
+        </button>
+        <button class="car-btn" id="svcNext" type="button" aria-label="Ver más servicios">
+          <Icon name="lucide:chevron-right" />
+        </button>
+      </div>
+    </div>
 
-    <div class="grid-3 stagger">
-      {services.map(s => (
-        <div class="service-card fade-up">
-          <Icon name={`lucide:${s.icon}`} class="service-icon" />
-          <h3>{s.title}</h3>
-          <span class="service-problem"><Icon name="lucide:x" class="inline-ico" /> {s.problem}</span>
-          <span class="service-solution"><Icon name="lucide:check" class="inline-ico" /> {s.solution}</span>
-          <p>{s.desc}</p>
-          <div class="tags-row">
-            {s.tags.map(t => <span class="tag">{t}</span>)}
-          </div>
-        </div>
-      ))}
+    <div class="svc-carousel fade-up">
+      <ul class="svc-track" id="svcTrack">
+        {services.map(s => (
+          <li class="svc-card">
+            <Icon name={`lucide:${s.icon}`} class="svc-icon" />
+            <h3>{s.title}</h3>
+            <p>{s.summary}</p>
+            <div class="tags-row">
+              {s.tags.map(t => <span class="tag">{t}</span>)}
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   </div>
 </section>
 
+<script>
+  const track = document.getElementById('svcTrack');
+  const prev  = document.getElementById('svcPrev') as HTMLButtonElement | null;
+  const next  = document.getElementById('svcNext') as HTMLButtonElement | null;
+
+  if (track && prev && next) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const step = () => {
+      const card = track.querySelector<HTMLElement>('.svc-card');
+      const gap = parseFloat(getComputedStyle(track).columnGap || '16') || 16;
+      return card ? card.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
+    };
+
+    const scrollByStep = (dir: number) =>
+      track.scrollBy({ left: dir * step(), behavior: reduce ? 'auto' : 'smooth' });
+
+    prev.addEventListener('click', () => scrollByStep(-1));
+    next.addEventListener('click', () => scrollByStep(1));
+
+    const update = () => {
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+    };
+    track.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>
+
 <style>
-  .service-card {
+  .services-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .carousel-nav { display: flex; gap: .5rem; flex-shrink: 0; }
+  .car-btn {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color .2s cubic-bezier(.4,0,.2,1), color .2s cubic-bezier(.4,0,.2,1), opacity .2s;
+  }
+  .car-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .car-btn:disabled { opacity: .35; cursor: default; }
+  .car-btn svg { width: 18px; height: 18px; }
+
+  /* Carrusel */
+  .svc-track {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: .25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .svc-track::-webkit-scrollbar { display: none; }
+
+  .svc-card {
+    flex: 0 0 clamp(240px, 31%, 300px);
+    scroll-snap-align: start;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 2rem;
-    transition: border-color .3s cubic-bezier(.4,0,.2,1), transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s cubic-bezier(.4,0,.2,1);
-    position: relative;
-    overflow: hidden;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+    transition: border-color .3s cubic-bezier(.4,0,.2,1), transform .3s cubic-bezier(.4,0,.2,1);
   }
-  .service-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    transform: scaleX(0);
-    transition: transform .3s cubic-bezier(.4,0,.2,1);
+  .svc-card:hover { border-color: rgba(45,212,191,.35); transform: translateY(-3px); }
+
+  .svc-icon { width: 1.9rem; height: 1.9rem; color: var(--accent); }
+  .svc-card h3 { font-size: 1.05rem; }
+  .svc-card p { font-size: .86rem; color: var(--muted); margin: 0; flex: 1; }
+  .tags-row { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .4rem; }
+
+  @media (max-width: 768px) {
+    .svc-card { flex-basis: 82%; }
   }
-  .service-card:hover { border-color: rgba(45,212,191,.35); transform: translateY(-4px); box-shadow: var(--shadow); }
-  .service-card:hover::after { transform: scaleX(1); }
-
-  .service-icon { width: 2rem; height: 2rem; color: var(--accent); margin-bottom: 1rem; display: block; }
-  .service-card h3 { margin-bottom: .75rem; }
-
-  .service-problem,
-  .service-solution {
-    display: inline-flex;
-    align-items: center;
-    gap: .35rem;
-    font-size: .8rem;
-    border-radius: 6px;
-    padding: .3rem .7rem;
-    margin-bottom: .4rem;
-  }
-  .inline-ico { width: .9rem; height: .9rem; flex-shrink: 0; }
-  .service-problem { color: #ef4444; background: rgba(239,68,68,.08); }
-  .service-solution { color: var(--accent2); background: rgba(52,211,153,.08); }
-
-  .service-card p { font-size: .88rem; color: var(--muted); margin-top: .5rem; }
-  .tags-row { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
 </style>
