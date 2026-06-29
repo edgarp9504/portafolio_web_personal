@@ -1,4 +1,5 @@
 ---
+import { SITE } from '../config/site';
 ---
 <footer>
   <div class="container">
@@ -8,10 +9,10 @@
         <div class="footer-copy">© {new Date().getFullYear()} Edgar Pérez · Data Engineer & Cloud Consultant · Cancún, México</div>
       </div>
       <div class="footer-links">
-        <a href="https://linkedin.com/in/tu-perfil" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://github.com/tu-usuario" target="_blank" rel="noopener">GitHub</a>
+        <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+        <a href={SITE.github} target="_blank" rel="noopener">GitHub</a>
         <a href="/blog">Blog</a>
-        <a href="mailto:edgar.perez@edgar-perez.com">Email</a>
+        <a href={`mailto:${SITE.email}`}>Email</a>
       </div>
     </div>
   </div>

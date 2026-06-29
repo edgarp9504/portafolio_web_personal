@@ -6,7 +6,18 @@
       "Bash(npm run:*)",
       "Bash(npm list:*)",
       "WebFetch(domain:gelesha-proyect.vercel.app)",
-      "Bash(xargs sed:*)"
+      "Bash(xargs sed:*)",
+      "WebFetch(domain:edgar-perez.com)",
+      "WebFetch(domain:www.edgar-perez.com)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} -> %{redirect_url}\\\\n\" -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\)\" https://www.edgar-perez.com)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} -> %{redirect_url}\\\\n\" -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\)\" https://edgar-perez.com)",
+      "Bash(curl -sI -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\)\" https://www.edgar-perez.com)",
+      "Bash(npm -v)",
+      "Bash(git rm *)",
+      "Bash(rm -f index.html)",
+      "Bash(grep -E \"node_modules|dist/|\\\\.astro/|^index.html$\")",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'chore: limpiar repo y centralizar configuración del sitio *)"
     ]
   }
 }

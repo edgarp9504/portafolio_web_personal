@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { SITE } from '../config/site';
 
 interface Props {
   title?: string;
@@ -69,10 +70,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     "name": "Edgar Pérez",
     "jobTitle": "Data Engineer & Cloud Consultant",
     "url": Astro.site,
-    "sameAs": [
-      "https://linkedin.com/in/edgar-perez",
-      "https://github.com/edgar-perez"
-    ],
+    "sameAs": [SITE.linkedin, SITE.github],
     "address": { "@type": "PostalAddress", "addressLocality": "Cancún", "addressCountry": "MX" }
   })} />
 </head>
