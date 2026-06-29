@@ -3,7 +3,7 @@
 <nav id="navbar">
   <div class="nav-inner">
     <a class="nav-logo" href="/">Edgar<span>.</span>dev</a>
-    <button class="hamburger" id="hamburger" aria-label="Menú">
+    <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links" id="navLinks">
@@ -25,9 +25,19 @@
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 20);
   });
-  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  const setExpanded = (open: boolean) => {
+    hamburger.setAttribute('aria-expanded', String(open));
+    hamburger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  };
+  hamburger.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    setExpanded(open);
+  });
   navLinks.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => navLinks.classList.remove('open'));
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      setExpanded(false);
+    });
   });
 
   // Active link highlight

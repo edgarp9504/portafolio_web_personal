@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import { waLink } from '../config/site';
+import '../styles/blog.css';
 
 interface Props {
   title: string;
@@ -8,16 +9,17 @@ interface Props {
   pubDate: Date;
   tags?: string[];
   readingTime?: number;
+  slug: string;
 }
 
-const { title, description, pubDate, tags = [], readingTime } = Astro.props;
+const { title, description, pubDate, tags = [], readingTime, slug } = Astro.props;
 
 const formatted = pubDate.toLocaleDateString('es-MX', {
   year: 'numeric', month: 'long', day: 'numeric',
 });
 ---
 
-<BaseLayout title={`${title} · Edgar Pérez`} description={description} type="article" pubDate={pubDate.toISOString()}>
+<BaseLayout title={`${title} · Edgar Pérez`} description={description} image={`/og/${slug}.png`} type="article" pubDate={pubDate.toISOString()}>
 
   <!-- NAV minimal -->
   <nav class="blog-nav">
