@@ -17,7 +17,9 @@
       "Bash(rm -f index.html)",
       "Bash(grep -E \"node_modules|dist/|\\\\.astro/|^index.html$\")",
       "Bash(git add *)",
-      "Bash(git commit -q -m 'chore: limpiar repo y centralizar configuración del sitio *)"
+      "Bash(git commit -q -m 'chore: limpiar repo y centralizar configuración del sitio *)",
+      "Bash(echo \"=== exit: $? ===\")",
+      "Bash(git commit -q -m 'refactor: convertir contenido de secciones en data tipada y eliminar testimonios *)"
     ]
   }
 }
